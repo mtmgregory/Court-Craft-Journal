@@ -4,7 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Court Craft Journal</title>
-    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Modular CSS Files -->
+    <link rel="stylesheet" href="base.css">
+    <link rel="stylesheet" href="auth.css">
+    <link rel="stylesheet" href="layout.css">
+    <link rel="stylesheet" href="forms.css">
+    <link rel="stylesheet" href="history.css">
+    <link rel="stylesheet" href="insights.css">
+    <link rel="stylesheet" href="toast.css">
+    <link rel="stylesheet" href="dark-mode.css">
 </head>
 <body>
     <!-- Authentication Screen -->
@@ -205,7 +214,7 @@
 
                 <div id="history" class="view">
                     <div class="export-section">
-                        <button onclick="exportToCSV()" style="width: auto; padding: 10px 20px;">📊 Export to CSV</button>
+                        <button onclick="exportToCSV()">📊 Export to CSV</button>
                     </div>
                     
                     <div class="filter-section">
@@ -267,7 +276,7 @@
 
     <button class="mode-toggle" onclick="toggleDarkMode()" title="Toggle Dark Mode">🌙</button>
 
-    <!-- Load all modules -->
+    <!-- Load all JavaScript modules -->
     <script type="module" src="firebase-config.js"></script>
     <script type="module" src="auth.js"></script>
     <script type="module" src="firestore-service.js"></script>

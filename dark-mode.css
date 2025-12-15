@@ -1,0 +1,284 @@
+/* ===============================================
+   DARK MODE STYLES
+   =============================================== */
+
+body.dark-mode {
+    --primary: #6366f1;
+    --primary-dark: #4f46e5;
+    --primary-light: #818cf8;
+    
+    background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+    color: #e5e7eb;
+}
+
+/* Authentication Dark Mode */
+body.dark-mode .auth-container {
+    background: #1e293b;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+}
+
+body.dark-mode .auth-header {
+    background: linear-gradient(135deg, #1e3a8a 0%, #1e1b4b 100%);
+}
+
+body.dark-mode .auth-form h2 {
+    color: #f1f5f9;
+}
+
+body.dark-mode .form-group label {
+    color: #cbd5e1;
+}
+
+body.dark-mode .form-group input {
+    background: #0f172a;
+    color: #f1f5f9;
+    border-color: #334155;
+}
+
+body.dark-mode .form-group input:focus {
+    background: #1e293b;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+}
+
+body.dark-mode .error-message {
+    color: #fca5a5;
+}
+
+/* Container & Layout Dark Mode */
+body.dark-mode .container {
+    background: #1e293b;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+}
+
+body.dark-mode .header {
+    background: linear-gradient(135deg, #1e3a8a 0%, #1e1b4b 100%);
+}
+
+body.dark-mode .tabs {
+    background: #0f172a;
+    border-bottom-color: #334155;
+}
+
+body.dark-mode .tab {
+    color: #94a3b8;
+    border-right-color: #334155;
+}
+
+body.dark-mode .tab:hover:not(.active) {
+    background: #1e293b;
+    color: #e2e8f0;
+}
+
+body.dark-mode .tab.active {
+    background: #1e293b;
+    color: var(--primary-light);
+    border-bottom-color: var(--primary);
+}
+
+/* Form Dark Mode */
+body.dark-mode .journal-section {
+    background: #0f172a;
+    border-color: #334155;
+}
+
+body.dark-mode .journal-section h2,
+body.dark-mode .journal-section h3 {
+    color: #f1f5f9;
+    border-bottom-color: #334155;
+}
+
+body.dark-mode label {
+    color: #cbd5e1;
+}
+
+body.dark-mode input,
+body.dark-mode textarea,
+body.dark-mode select {
+    background: #0f172a;
+    color: #f1f5f9;
+    border-color: #334155;
+}
+
+body.dark-mode input:focus,
+body.dark-mode textarea:focus,
+body.dark-mode select:focus {
+    background: #1e293b;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+}
+
+body.dark-mode select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23cbd5e1' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+}
+
+/* History Dark Mode */
+body.dark-mode .entry-card {
+    background: #0f172a;
+    border-color: #334155;
+}
+
+body.dark-mode .entry-card:hover {
+    border-color: var(--primary);
+}
+
+body.dark-mode .match-header {
+    background: linear-gradient(135deg, #1e3a8a 0%, #1e1b4b 100%);
+}
+
+body.dark-mode .entry-header {
+    border-bottom-color: #334155;
+}
+
+body.dark-mode .entry-date {
+    color: #f1f5f9;
+}
+
+body.dark-mode .detail-item {
+    background: #1e293b;
+    border-color: #334155;
+}
+
+body.dark-mode .detail-item:hover {
+    background: #334155;
+}
+
+body.dark-mode .detail-label {
+    color: #94a3b8;
+}
+
+body.dark-mode .detail-value {
+    color: #f1f5f9;
+}
+
+body.dark-mode .no-entries {
+    background: #0f172a;
+    border-color: #334155;
+    color: #94a3b8;
+}
+
+/* Filter Section Dark Mode */
+body.dark-mode .filter-section {
+    background: #0f172a;
+    border-color: #334155;
+}
+
+body.dark-mode .filter-section h2 {
+    color: #f1f5f9;
+    border-bottom-color: #334155;
+}
+
+body.dark-mode .export-section {
+    background: #0f172a;
+    border-color: #334155;
+}
+
+body.dark-mode .sort-controls {
+    border-top-color: #334155;
+}
+
+/* Insights Dark Mode */
+body.dark-mode .stat-card {
+    background: linear-gradient(135deg, #1e3a8a 0%, #1e1b4b 100%);
+}
+
+body.dark-mode .stat-card.success {
+    background: linear-gradient(135deg, #065f46 0%, #064e3b 100%);
+}
+
+body.dark-mode .stat-card.warning {
+    background: linear-gradient(135deg, #92400e 0%, #78350f 100%);
+}
+
+body.dark-mode .stat-card.info {
+    background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+}
+
+body.dark-mode .stat-card.danger {
+    background: linear-gradient(135deg, #991b1b 0%, #7f1d1d 100%);
+}
+
+body.dark-mode .insight-section {
+    background: #0f172a;
+    border-left-color: var(--primary);
+}
+
+body.dark-mode .insight-section h3 {
+    color: #f1f5f9;
+}
+
+body.dark-mode .insight-list li {
+    background: #1e293b;
+    border-left-color: var(--primary-light);
+}
+
+body.dark-mode .insight-list li:hover {
+    background: #334155;
+}
+
+body.dark-mode .insight-list li strong {
+    color: var(--primary-light);
+}
+
+body.dark-mode .chart-container {
+    background: #0f172a;
+}
+
+body.dark-mode .chart-container h3 {
+    color: #f1f5f9;
+    border-bottom-color: #334155;
+}
+
+body.dark-mode .progress-bar {
+    background: #334155;
+}
+
+body.dark-mode .progress-fill {
+    background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%);
+}
+
+body.dark-mode .insight-badge.positive {
+    background: #064e3b;
+    color: #6ee7b7;
+}
+
+body.dark-mode .insight-badge.negative {
+    background: #7f1d1d;
+    color: #fca5a5;
+}
+
+body.dark-mode .insight-badge.neutral {
+    background: #334155;
+    color: #cbd5e1;
+}
+
+/* Loading States Dark Mode */
+body.dark-mode .loading-overlay {
+    background: rgba(0, 0, 0, 0.8);
+}
+
+body.dark-mode .loading-content {
+    background: #1e293b;
+    color: #f1f5f9;
+}
+
+body.dark-mode .loading-spinner {
+    border-color: #334155;
+    border-top-color: var(--primary);
+}
+
+/* Typography Dark Mode */
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4,
+body.dark-mode h5,
+body.dark-mode h6 {
+    color: #f1f5f9;
+}
+
+/* Button Dark Mode Adjustments */
+body.dark-mode button:disabled {
+    background: #334155;
+    color: #64748b;
+}
