@@ -122,6 +122,23 @@ body.dark-mode .entry-card:hover {
     border-color: var(--primary);
 }
 
+body.dark-mode .entry-card-header:hover {
+    background: #1e293b;
+}
+
+body.dark-mode .expand-toggle {
+    background: #1e293b;
+}
+
+body.dark-mode .entry-card-header:hover .expand-toggle {
+    background: var(--primary);
+    color: white;
+}
+
+body.dark-mode .entry-card-body {
+    border-top-color: #334155;
+}
+
 body.dark-mode .match-header {
     background: linear-gradient(135deg, #1e3a8a 0%, #1e1b4b 100%);
 }
@@ -132,6 +149,14 @@ body.dark-mode .entry-header {
 
 body.dark-mode .entry-date {
     color: #f1f5f9;
+}
+
+body.dark-mode .entry-quick-info {
+    color: #94a3b8;
+}
+
+body.dark-mode .entry-quick-info-item strong {
+    color: #e2e8f0;
 }
 
 body.dark-mode .detail-item {
