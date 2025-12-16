@@ -1,4 +1,4 @@
-// Main Application Script - ENHANCED WITH EVENT DELEGATION
+// Main Application Script - FIXED EVENT DELEGATION
 import { initAuth, getCurrentUser } from './auth.js';
 import { migrateFromLocalStorage } from './firestore-service.js';
 import { initializeDarkMode } from './ui-helpers.js';
@@ -14,8 +14,10 @@ import './export.js';
 function setupEventDelegation() {
     // Delegate delete button clicks
     document.addEventListener('click', (e) => {
+        // Handle delete buttons
         if (e.target.matches('.delete-btn') || e.target.closest('.delete-btn')) {
             e.preventDefault();
+            e.stopPropagation(); // Prevent event from bubbling
             const btn = e.target.matches('.delete-btn') ? e.target : e.target.closest('.delete-btn');
             const card = btn.closest('.entry-card');
             if (card) {
@@ -24,11 +26,13 @@ function setupEventDelegation() {
                     window.deleteEntry(key);
                 }
             }
+            return;
         }
         
-        // Delegate edit button clicks
+        // Handle edit buttons
         if (e.target.matches('.edit-btn') || e.target.closest('.edit-btn')) {
             e.preventDefault();
+            e.stopPropagation(); // Prevent event from bubbling
             const btn = e.target.matches('.edit-btn') ? e.target : e.target.closest('.edit-btn');
             const card = btn.closest('.entry-card');
             if (card) {
@@ -37,19 +41,23 @@ function setupEventDelegation() {
                     window.editEntry(key);
                 }
             }
+            return;
         }
         
-        // Delegate entry card header clicks for expansion
+        // Handle entry card header clicks for expansion
         if (e.target.matches('.entry-card-header') || e.target.closest('.entry-card-header')) {
+            // Don't trigger if clicking on buttons or inside button groups
+            if (e.target.matches('button') || e.target.closest('button') || 
+                e.target.matches('.btn-group') || e.target.closest('.btn-group')) {
+                return;
+            }
+            
             const header = e.target.matches('.entry-card-header') ? e.target : e.target.closest('.entry-card-header');
-            // Don't trigger if clicking on buttons
-            if (!e.target.matches('button') && !e.target.closest('button')) {
-                const card = header.closest('.entry-card');
-                if (card) {
-                    const key = card.dataset.entryKey;
-                    if (key && window.toggleEntryExpand) {
-                        window.toggleEntryExpand(key);
-                    }
+            const card = header.closest('.entry-card');
+            if (card) {
+                const key = card.dataset.entryKey;
+                if (key && window.toggleEntryExpand) {
+                    window.toggleEntryExpand(key);
                 }
             }
         }

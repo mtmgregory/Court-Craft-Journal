@@ -1,4 +1,4 @@
-// UI Helpers Module
+// UI Helpers Module - FIXED EVENT HANDLERS
 
 // Show toast notification
 export function showToast(message, type = 'success') {
@@ -95,7 +95,7 @@ function getHealthIndicator(value, type) {
     return value;
 }
 
-// Create entry card HTML with enhanced styling
+// Create entry card HTML with enhanced styling - FIXED EVENT HANDLERS
 export function createEntryCard(entry) {
     const date = new Date(entry.date);
     const formattedDate = date.toLocaleDateString('en-US', { 
@@ -153,7 +153,7 @@ export function createEntryCard(entry) {
     
     return `
         <div class="entry-card" data-entry-key="${entry.key}">
-            <div class="entry-card-header" onclick="toggleEntryExpand('${entry.key}')">
+            <div class="entry-card-header">
                 <div class="entry-card-summary">
                     <div>
                         <div class="entry-date">${formattedDate}</div>
@@ -262,8 +262,8 @@ export function createEntryCard(entry) {
                     </div>
                 ` : ''}
                 <div class="btn-group" style="margin-top: 15px;">
-                    <button class="edit-btn" onclick="editEntry('${entry.key}')">✏️ Edit</button>
-                    <button class="delete-btn" onclick="deleteEntry('${entry.key}')">🗑️ Delete</button>
+                    <button class="edit-btn">✏️ Edit</button>
+                    <button class="delete-btn">🗑️ Delete</button>
                 </div>
             </div>
         </div>
