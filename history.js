@@ -7,6 +7,14 @@ import {
 import { createEntryCard, showToast } from './ui-helpers.js';
 import { toggleMatchFields } from './form-handlers.js';
 
+let searchTimeout;
+window.debouncedSearch = function() {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+        loadHistory();
+    }, 300);
+};
+
 // Load history with filters
 export async function loadHistory() {
     const container = document.getElementById('entriesContainer');
@@ -18,26 +26,14 @@ export async function loadHistory() {
     if (!container) return;
 
     try {
-        const result = await getAllEntriesFromFirestore();
-        if (!result || !result.keys || result.keys.length === 0) {
+        const entries = await getAllEntriesFromFirestore();
+        
+        if (!entries || entries.length === 0) {
             container.innerHTML = '<div class="no-entries">📝 No entries yet. Start by creating your first journal entry!</div>';
             return;
         }
 
-        const entries = [];
-        for (const key of result.keys) {
-            try {
-                const data = await getEntryFromFirestore(key);
-                if (data && data.value) {
-                    const entry = JSON.parse(data.value);
-                    entry.key = key;
-                    entries.push(entry);
-                }
-            } catch (e) {
-                console.error('Error loading entry:', e);
-            }
-        }
-
+        // Filter entries
         let filtered = entries.filter(e => {
             if (filterRating && e.rating !== filterRating) return false;
             
@@ -68,6 +64,7 @@ export async function loadHistory() {
             return true;
         });
 
+        // Sort entries
         filtered.sort((a, b) => {
             if (sortBy === 'date-desc') return new Date(b.date) - new Date(a.date);
             if (sortBy === 'date-asc') return new Date(a.date) - new Date(b.date);

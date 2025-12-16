@@ -1,5 +1,5 @@
 // Insights Module
-import { getAllEntriesFromFirestore, getEntryFromFirestore } from './firestore-service.js';
+import { getAllEntriesFromFirestore } from './firestore-service.js';
 
 // Load insights
 export async function loadInsights() {
@@ -9,23 +9,12 @@ export async function loadInsights() {
     if (!statsGrid || !insightsContainer) return;
 
     try {
-        const result = await getAllEntriesFromFirestore();
-        if (!result || !result.keys || result.keys.length === 0) {
+        const entries = await getAllEntriesFromFirestore();
+        
+        if (!entries || entries.length === 0) {
             insightsContainer.innerHTML = '<div class="no-entries">📊 No data yet. Add some entries to see insights!</div>';
             statsGrid.innerHTML = '';
             return;
-        }
-
-        const entries = [];
-        for (const key of result.keys) {
-            try {
-                const data = await getEntryFromFirestore(key);
-                if (data && data.value) {
-                    entries.push(JSON.parse(data.value));
-                }
-            } catch (e) {
-                console.error('Error loading entry:', e);
-            }
         }
 
         const avgRating = (entries.reduce((sum, e) => sum + parseInt(e.rating), 0) / entries.length).toFixed(1);

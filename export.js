@@ -5,22 +5,11 @@ import { showToast } from './ui-helpers.js';
 // Export to CSV
 export async function exportToCSV() {
     try {
-        const result = await getAllEntriesFromFirestore();
-        if (!result || !result.keys || result.keys.length === 0) {
+        const entries = await getAllEntriesFromFirestore();
+        
+        if (!entries || entries.length === 0) {
             showToast('No entries to export', 'error');
             return;
-        }
-
-        const entries = [];
-        for (const key of result.keys) {
-            try {
-                const data = await getEntryFromFirestore(key);
-                if (data && data.value) {
-                    entries.push(JSON.parse(data.value));
-                }
-            } catch (e) {
-                console.error('Error loading entry:', e);
-            }
         }
 
         entries.sort((a, b) => new Date(a.date) - new Date(b.date));
@@ -88,5 +77,7 @@ export async function exportToCSV() {
         console.error(error);
     }
 }
+
+window.exportToCSV = exportToCSV;
 
 window.exportToCSV = exportToCSV;

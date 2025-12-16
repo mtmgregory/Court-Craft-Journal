@@ -3,7 +3,27 @@ import { saveEntryToFirestore, saveDraftToFirestore, loadDraftFromFirestore, del
 import { showToast } from './ui-helpers.js';
 import { loadHistory } from './history.js';
 
+
+
 let autoSaveTimer = null;
+
+// ADD THIS NEW FUNCTION
+function validateEntry(entry) {
+    const errors = [];
+    
+    if (!entry.date) errors.push('Date is required');
+    if (!entry.rating || entry.rating < 1 || entry.rating > 5) {
+        errors.push('Rating must be between 1 and 5');
+    }
+    
+    if (entry.sessionType === 'Match Day') {
+        if (!entry.opponentName?.trim()) {
+            errors.push('Opponent name is required for matches');
+        }
+    }
+    
+    return errors;
+}
 
 // Toggle match fields visibility
 export function toggleMatchFields() {
@@ -67,6 +87,13 @@ window.saveEntry = async function() {
         matchSummary: document.getElementById('matchSummary')?.value || '',
         oneThingToWorkOn: document.getElementById('oneThingToWorkOn')?.value || ''
     };
+    
+    // ADD VALIDATION HERE
+    const errors = validateEntry(entry);
+    if (errors.length > 0) {
+        showToast(errors.join(', '), 'error');
+        return;
+    }
     
     try {
         const key = editingKey || `entry:${Date.now()}`;

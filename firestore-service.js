@@ -45,12 +45,15 @@ export async function getAllEntriesFromFirestore() {
         const entriesRef = collection(db, 'users', user.uid, 'entries');
         const querySnapshot = await getDocs(entriesRef);
         
-        const keys = [];
+        const entries = [];
         querySnapshot.forEach((doc) => {
-            keys.push(doc.id);
+            entries.push({
+                key: doc.id,
+                ...doc.data()
+            });
         });
         
-        return { keys };
+        return entries; // Return actual data, not just keys
     } catch (error) {
         console.error('Error getting entries:', error);
         throw error;

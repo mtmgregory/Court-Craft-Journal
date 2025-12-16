@@ -223,9 +223,9 @@
                         <h2>🔍 Search & Filter</h2>
                         
                         <div class="search-box">
-                            <label for="searchKeyword">Search:</label>
-                            <input type="text" id="searchKeyword" placeholder="Search exercises, meals, notes..." onkeyup="loadHistory()">
-                        </div>
+    <label for="searchKeyword">Search:</label>
+    <input type="text" id="searchKeyword" placeholder="Search exercises, meals, notes..." oninput="debouncedSearch()">
+</div>
                         
                         <div class="filter-row">
                             <div class="filter-group">
