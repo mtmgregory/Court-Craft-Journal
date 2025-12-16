@@ -22,7 +22,80 @@ export function showToast(message, type = 'success') {
 
 window.showToast = showToast;
 
-// Create entry card HTML
+// Get rating badge HTML with color coding
+function getRatingBadge(rating) {
+    const ratingNum = parseInt(rating);
+    let badgeClass = 'rating-badge';
+    let stars = '★'.repeat(ratingNum);
+    
+    if (ratingNum >= 5) {
+        badgeClass += ' excellent';
+    } else if (ratingNum >= 4) {
+        badgeClass += ' good';
+    } else if (ratingNum >= 3) {
+        badgeClass += ' average';
+    } else {
+        badgeClass += ' poor';
+    }
+    
+    return `<span class="${badgeClass}">${stars} ${ratingNum}/5</span>`;
+}
+
+// Get session type badge with color coding
+function getSessionTypeBadge(sessionType) {
+    if (!sessionType) return '';
+    
+    let badgeClass = 'session-type-badge';
+    
+    if (sessionType === 'Match Day') {
+        badgeClass += ' match';
+    } else if (sessionType === 'Training') {
+        badgeClass += ' training';
+    } else if (sessionType === 'Recovery') {
+        badgeClass += ' recovery';
+    }
+    
+    return `<span class="${badgeClass}">${sessionType}</span>`;
+}
+
+// Get health indicator with color coding
+function getHealthIndicator(value, type) {
+    if (!value) return 'N/A';
+    
+    const numValue = parseFloat(value);
+    let indicatorClass = 'health-indicator';
+    let status = '';
+    
+    if (type === 'sleep') {
+        if (numValue >= 7.5) {
+            indicatorClass += ' good';
+            status = 'Good';
+        } else if (numValue >= 6) {
+            indicatorClass += ' average';
+            status = 'Fair';
+        } else {
+            indicatorClass += ' poor';
+            status = 'Low';
+        }
+        return `<span class="${indicatorClass}">😴 ${value}h (${status})</span>`;
+    } else if (type === 'hydration') {
+        if (numValue >= 2.5) {
+            indicatorClass += ' good';
+            status = 'Good';
+        } else if (numValue >= 1.5) {
+            indicatorClass += ' average';
+            status = 'Fair';
+        } else {
+            indicatorClass += ' poor';
+            status = 'Low';
+        }
+        return `<span class="${indicatorClass}">💧 ${value}L (${status})</span>`;
+    }
+    
+    return value;
+}
+
+// Create entry card HTML with enhanced styling
 export function createEntryCard(entry) {
     const date = new Date(entry.date);
     const formattedDate = date.toLocaleDateString('en-US', { 
@@ -32,7 +105,6 @@ export function createEntryCard(entry) {
         day: 'numeric' 
     });
     
-    const stars = '⭐'.repeat(parseInt(entry.rating));
     const weatherEmoji = {
         'sunny': '☀️',
         'cloudy': '☁️',
@@ -44,14 +116,14 @@ export function createEntryCard(entry) {
     const isMatch = entry.sessionType === 'Match Day';
     const matchBadge = isMatch ? `<div class="match-header">🎾 Match Day</div>` : '';
     
-    // Quick info for collapsed view
+    // Enhanced quick info with color-coded badges
     let quickInfo = `<div class="entry-quick-info">`;
-    quickInfo += `<div class="entry-quick-info-item"><strong>${entry.sessionType || 'Session'}</strong></div>`;
+    quickInfo += `<div class="entry-quick-info-item">${getSessionTypeBadge(entry.sessionType)}</div>`;
     if (entry.sleep) {
-        quickInfo += `<div class="entry-quick-info-item">😴 <strong>${entry.sleep}h</strong> sleep</div>`;
+        quickInfo += `<div class="entry-quick-info-item">${getHealthIndicator(entry.sleep, 'sleep')}</div>`;
     }
     if (entry.hydration) {
-        quickInfo += `<div class="entry-quick-info-item">💧 <strong>${entry.hydration}L</strong></div>`;
+        quickInfo += `<div class="entry-quick-info-item">${getHealthIndicator(entry.hydration, 'hydration')}</div>`;
     }
     if (isMatch && entry.opponentName) {
         quickInfo += `<div class="entry-quick-info-item">vs <strong>${entry.opponentName}</strong></div>`;
@@ -65,17 +137,17 @@ export function createEntryCard(entry) {
         </div>
         <div class="detail-item">
             <div class="detail-label">Scores</div>
-            <div class="detail-value">${entry.gameScores || 'N/A'}</div>
+            <div class="detail-value stat">${entry.gameScores || 'N/A'}</div>
         </div>
         ${entry.opponentLevel ? `
         <div class="detail-item">
             <div class="detail-label">Opponent Level</div>
-            <div class="detail-value">${entry.opponentLevel}</div>
+            <div class="detail-value stat">${entry.opponentLevel}</div>
         </div>` : ''}
         ${entry.yourLevel ? `
         <div class="detail-item">
             <div class="detail-label">Your Level</div>
-            <div class="detail-value">${entry.yourLevel}</div>
+            <div class="detail-value stat">${entry.yourLevel}</div>
         </div>` : ''}
     ` : '';
     
@@ -87,7 +159,7 @@ export function createEntryCard(entry) {
                         <div class="entry-date">${formattedDate}</div>
                         ${matchBadge}
                     </div>
-                    <div class="rating">${stars}</div>
+                    ${getRatingBadge(entry.rating)}
                     ${quickInfo}
                 </div>
                 <div class="expand-toggle"></div>
@@ -105,15 +177,15 @@ export function createEntryCard(entry) {
                     </div>
                     <div class="detail-item">
                         <div class="detail-label">Temperature</div>
-                        <div class="detail-value">${entry.temperature ? entry.temperature + '°C' : 'N/A'}</div>
+                        <div class="detail-value stat">${entry.temperature ? entry.temperature + '°C' : 'N/A'}</div>
                     </div>
                     <div class="detail-item">
                         <div class="detail-label">Sleep</div>
-                        <div class="detail-value">${entry.sleep ? entry.sleep + ' hrs' : 'N/A'}</div>
+                        <div class="detail-value stat">${entry.sleep ? entry.sleep + ' hrs' : 'N/A'}</div>
                     </div>
                     <div class="detail-item">
                         <div class="detail-label">Hydration</div>
-                        <div class="detail-value">${entry.hydration ? entry.hydration + 'L' : 'N/A'}</div>
+                        <div class="detail-value stat">${entry.hydration ? entry.hydration + 'L' : 'N/A'}</div>
                     </div>
                     ${matchDetails}
                 </div>

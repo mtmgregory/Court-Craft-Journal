@@ -10,6 +10,18 @@
     box-shadow: var(--shadow-xl);
     overflow: hidden;
     transition: all var(--transition-slow);
+    animation: containerFadeIn 0.6s ease-out;
+}
+
+@keyframes containerFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
 .header {
@@ -37,6 +49,8 @@
     color: white;
     position: relative;
     z-index: 1;
+    font-weight: 800;
+    letter-spacing: -0.02em;
 }
 
 .header p {
@@ -44,9 +58,10 @@
     font-size: 1rem;
     position: relative;
     z-index: 1;
+    font-weight: 500;
 }
 
-/* Tabs Navigation */
+/* Tabs Navigation - Enhanced Transitions */
 .tabs {
     display: flex;
     background: var(--gray-50);
@@ -76,6 +91,7 @@
 .tab:hover:not(.active) {
     background: var(--gray-100);
     color: var(--gray-800);
+    transform: translateY(-2px);
 }
 
 .tab.active {
@@ -83,6 +99,7 @@
     color: var(--primary);
     border-bottom: 3px solid var(--primary);
     margin-bottom: -2px;
+    font-weight: 700;
 }
 
 .tab.active::after {
@@ -93,10 +110,19 @@
     right: 0;
     height: 3px;
     background: var(--primary);
-    animation: slideIn 0.3s ease-out;
+    animation: tabSlideIn 0.3s ease-out;
 }
 
-/* Content Area */
+@keyframes tabSlideIn {
+    from {
+        transform: scaleX(0);
+    }
+    to {
+        transform: scaleX(1);
+    }
+}
+
+/* Content Area - Smooth Transitions */
 .content {
     padding: var(--spacing-xl);
     min-height: 400px;
@@ -104,7 +130,18 @@
 
 .view {
     display: none;
-    animation: fadeIn 0.5s ease-out;
+    animation: viewFadeIn 0.5s ease-out;
+}
+
+@keyframes viewFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .view.active {
@@ -130,10 +167,10 @@
 
 .quick-btn:hover {
     background: var(--gray-600);
-    transform: translateY(-1px);
+    transform: translateY(-2px);
 }
 
-/* Mode Toggle Button */
+/* Mode Toggle Button - Enhanced */
 .mode-toggle {
     position: fixed;
     bottom: var(--spacing-lg);
@@ -150,8 +187,33 @@
 }
 
 .mode-toggle:hover {
-    transform: scale(1.1) rotate(15deg);
+    transform: scale(1.15) rotate(15deg);
     box-shadow: var(--shadow-xl);
+    background: var(--gray-900);
+}
+
+.mode-toggle:active {
+    transform: scale(1.05) rotate(0deg);
+}
+
+/* Section Dividers */
+.section-divider {
+    height: 2px;
+    background: linear-gradient(90deg, transparent 0%, var(--gray-300) 50%, transparent 100%);
+    margin: var(--spacing-2xl) 0;
+    position: relative;
+}
+
+.section-divider::after {
+    content: '◆';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 0 var(--spacing-md);
+    color: var(--gray-400);
+    font-size: 0.75rem;
 }
 
 /* Responsive Design */
