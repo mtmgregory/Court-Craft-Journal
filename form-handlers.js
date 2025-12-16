@@ -1,24 +1,66 @@
-// Form Handlers Module
+// Form Handlers Module - ENHANCED VALIDATION
 import { saveEntryToFirestore, saveDraftToFirestore, loadDraftFromFirestore, deleteDraftFromFirestore } from './firestore-service.js';
 import { showToast } from './ui-helpers.js';
 import { loadHistory } from './history.js';
 
-
-
 let autoSaveTimer = null;
+let isSaving = false;
+let pendingSave = false;
 
-// ADD THIS NEW FUNCTION
+// ENHANCED VALIDATION FUNCTION
 function validateEntry(entry) {
     const errors = [];
     
-    if (!entry.date) errors.push('Date is required');
-    if (!entry.rating || entry.rating < 1 || entry.rating > 5) {
-        errors.push('Rating must be between 1 and 5');
+    // Required fields
+    if (!entry.date) {
+        errors.push('Date is required');
+    } else {
+        // Validate date format
+        const date = new Date(entry.date);
+        if (isNaN(date.getTime())) {
+            errors.push('Invalid date format');
+        }
     }
     
+    // Rating validation
+    if (!entry.rating) {
+        errors.push('Session rating is required');
+    } else {
+        const rating = parseInt(entry.rating);
+        if (isNaN(rating) || rating < 1 || rating > 5) {
+            errors.push('Rating must be between 1 and 5');
+        }
+    }
+    
+    // Match-specific validation
     if (entry.sessionType === 'Match Day') {
-        if (!entry.opponentName?.trim()) {
+        if (!entry.opponentName || !entry.opponentName.trim()) {
             errors.push('Opponent name is required for matches');
+        }
+        if (!entry.gameScores || !entry.gameScores.trim()) {
+            errors.push('Game scores are required for matches');
+        }
+    }
+    
+    // Numeric field validation
+    if (entry.temperature !== '' && entry.temperature !== null && entry.temperature !== undefined) {
+        const temp = parseFloat(entry.temperature);
+        if (isNaN(temp) || temp < -50 || temp > 60) {
+            errors.push('Temperature must be between -50°C and 60°C');
+        }
+    }
+    
+    if (entry.hydration !== '' && entry.hydration !== null && entry.hydration !== undefined) {
+        const hydration = parseFloat(entry.hydration);
+        if (isNaN(hydration) || hydration < 0 || hydration > 20) {
+            errors.push('Hydration must be between 0L and 20L');
+        }
+    }
+    
+    if (entry.sleep !== '' && entry.sleep !== null && entry.sleep !== undefined) {
+        const sleep = parseFloat(entry.sleep);
+        if (isNaN(sleep) || sleep < 0 || sleep > 24) {
+            errors.push('Sleep must be between 0 and 24 hours');
         }
     }
     
@@ -49,7 +91,7 @@ window.updateSessionType = function() {
     toggleMatchFields();
 };
 
-// Save entry
+// Save entry - WITH ENHANCED VALIDATION
 window.saveEntry = async function() {
     const editingKey = document.getElementById('editingKey')?.value;
     const date = document.getElementById('entryDate').value;
@@ -88,10 +130,10 @@ window.saveEntry = async function() {
         oneThingToWorkOn: document.getElementById('oneThingToWorkOn')?.value || ''
     };
     
-    // ADD VALIDATION HERE
+    // ENHANCED VALIDATION
     const errors = validateEntry(entry);
     if (errors.length > 0) {
-        showToast(errors.join(', '), 'error');
+        showToast(errors.join('. '), 'error');
         return;
     }
     
@@ -110,8 +152,8 @@ window.saveEntry = async function() {
             window.switchTab('history');
         }
     } catch (error) {
-        showToast('Error saving entry', 'error');
-        console.error(error);
+        console.error('Failed to save entry:', error);
+        showToast('Error saving entry. Please try again.', 'error');
     }
 };
 
@@ -137,7 +179,7 @@ window.clearForm = function() {
     if (cancelBtn) cancelBtn.style.display = 'none';
     
     toggleMatchFields();
-    deleteDraftFromFirestore();
+    deleteDraftFromFirestore().catch(err => console.error('Failed to delete draft:', err));
 };
 
 // Cancel edit
@@ -145,6 +187,30 @@ window.cancelEdit = function() {
     clearForm();
     showToast('Edit cancelled', 'success');
 };
+
+// ENHANCED AUTO-SAVE WITH RACE CONDITION PREVENTION
+async function debouncedSaveDraft() {
+    if (isSaving) {
+        pendingSave = true;
+        return;
+    }
+    
+    isSaving = true;
+    try {
+        await saveDraft();
+        
+        if (pendingSave) {
+            pendingSave = false;
+            // Save again if there were changes during save
+            setTimeout(debouncedSaveDraft, 500);
+        }
+    } catch (error) {
+        console.error('Auto-save failed:', error);
+        showToast('Auto-save failed', 'warning');
+    } finally {
+        isSaving = false;
+    }
+}
 
 // Auto-save draft
 export function startAutoSave() {
@@ -156,7 +222,7 @@ export function startAutoSave() {
     inputs.forEach(input => {
         input.addEventListener('input', () => {
             clearTimeout(autoSaveTimer);
-            autoSaveTimer = setTimeout(saveDraft, 2000);
+            autoSaveTimer = setTimeout(debouncedSaveDraft, 2000);
         });
     });
 }
@@ -188,32 +254,36 @@ async function saveDraft() {
 
 // Load draft
 export async function loadDraft() {
-    const draft = await loadDraftFromFirestore();
-    if (!draft) return;
-    
-    const fieldMap = {
-        'entryDate': 'date',
-        'weatherCondition': 'weather',
-        'temperature': 'temperature',
-        'surface': 'surface',
-        'preWorkoutMeal': 'preWorkoutMeal',
-        'hydration': 'hydration',
-        'sleepHours': 'sleep',
-        'sessionTypeSelect': 'sessionType',
-        'sessionDetails': 'sessionDetails',
-        'sessionRating': 'rating',
-        'notes': 'notes'
-    };
-    
-    Object.keys(fieldMap).forEach(fieldId => {
-        const field = document.getElementById(fieldId);
-        const draftKey = fieldMap[fieldId];
-        if (field && draft[draftKey]) {
-            field.value = draft[draftKey];
-        }
-    });
-    
-    toggleMatchFields();
+    try {
+        const draft = await loadDraftFromFirestore();
+        if (!draft) return;
+        
+        const fieldMap = {
+            'entryDate': 'date',
+            'weatherCondition': 'weather',
+            'temperature': 'temperature',
+            'surface': 'surface',
+            'preWorkoutMeal': 'preWorkoutMeal',
+            'hydration': 'hydration',
+            'sleepHours': 'sleep',
+            'sessionTypeSelect': 'sessionType',
+            'sessionDetails': 'sessionDetails',
+            'sessionRating': 'rating',
+            'notes': 'notes'
+        };
+        
+        Object.keys(fieldMap).forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            const draftKey = fieldMap[fieldId];
+            if (field && draft[draftKey]) {
+                field.value = draft[draftKey];
+            }
+        });
+        
+        toggleMatchFields();
+    } catch (error) {
+        console.error('Failed to load draft:', error);
+    }
 }
 
 // Switch tabs
