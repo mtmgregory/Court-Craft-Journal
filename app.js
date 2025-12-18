@@ -1,7 +1,6 @@
 // Main Application Script - FIXED EVENT DELEGATION
 import { initAuth, getCurrentUser } from './auth.js';
 import { migrateFromLocalStorage } from './firestore-service.js';
-import { initializeDarkMode } from './ui-helpers.js';
 import { startAutoSave, loadDraft } from './form-handlers.js';
 import { toggleMatchFields } from './form-handlers.js';
 
@@ -91,10 +90,7 @@ window.onload = function() {
         const day = String(today.getDate()).padStart(2, '0');
         dateField.value = `${year}-${month}-${day}`;
     }
-    
-    // Initialize dark mode
-    initializeDarkMode();
-    
+        
     // Setup event delegation for dynamic content
     setupEventDelegation();
     

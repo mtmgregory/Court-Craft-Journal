@@ -1,4 +1,4 @@
-// UI Helpers Module - FIXED EVENT HANDLERS
+// UI Helpers Module - ENHANCED LAYOUT - FIXED
 
 // Show toast notification
 export function showToast(message, type = 'success') {
@@ -95,7 +95,7 @@ function getHealthIndicator(value, type) {
     return value;
 }
 
-// Create entry card HTML with enhanced styling - FIXED EVENT HANDLERS
+// Create entry card HTML with enhanced styling - IMPROVED LAYOUT
 export function createEntryCard(entry) {
     const date = new Date(entry.date);
     const formattedDate = date.toLocaleDateString('en-US', { 
@@ -114,21 +114,36 @@ export function createEntryCard(entry) {
     };
     
     const isMatch = entry.sessionType === 'Match Day';
-    const matchBadge = isMatch ? `<div class="match-header">🎾 Match Day</div>` : '';
     
-    // Enhanced quick info with color-coded badges
-    let quickInfo = `<div class="entry-quick-info">`;
-    quickInfo += `<div class="entry-quick-info-item">${getSessionTypeBadge(entry.sessionType)}</div>`;
-    if (entry.sleep) {
-        quickInfo += `<div class="entry-quick-info-item">${getHealthIndicator(entry.sleep, 'sleep')}</div>`;
+    // Health metrics in a clean row
+    let healthMetricsHTML = '';
+    if (entry.sleep || entry.hydration) {
+        healthMetricsHTML = `<div class="health-metrics">`;
+        if (entry.sleep) {
+            healthMetricsHTML += getHealthIndicator(entry.sleep, 'sleep');
+        }
+        if (entry.hydration) {
+            healthMetricsHTML += getHealthIndicator(entry.hydration, 'hydration');
+        }
+        healthMetricsHTML += `</div>`;
     }
-    if (entry.hydration) {
-        quickInfo += `<div class="entry-quick-info-item">${getHealthIndicator(entry.hydration, 'hydration')}</div>`;
-    }
-    if (isMatch && entry.opponentName) {
-        quickInfo += `<div class="entry-quick-info-item">vs <strong>${entry.opponentName}</strong></div>`;
-    }
-    quickInfo += `</div>`;
+    
+    // Build header info with rating on right, health metrics below badges
+    let headerInfo = `
+        <div class="entry-header-info">
+            <div class="entry-date-row">
+                <span class="entry-date">${formattedDate}</span>
+            </div>
+            <div class="entry-badges-row">
+                ${getSessionTypeBadge(entry.sessionType)}
+                ${isMatch && entry.opponentName ? `<span class="opponent-badge">vs ${entry.opponentName}</span>` : ''}
+            </div>
+            ${healthMetricsHTML}
+        </div>
+        <div class="rating-container">
+            ${getRatingBadge(entry.rating)}
+        </div>
+    `;
     
     const matchDetails = isMatch && entry.opponentName ? `
         <div class="detail-item">
@@ -155,12 +170,7 @@ export function createEntryCard(entry) {
         <div class="entry-card" data-entry-key="${entry.key}">
             <div class="entry-card-header">
                 <div class="entry-card-summary">
-                    <div>
-                        <div class="entry-date">${formattedDate}</div>
-                        ${matchBadge}
-                    </div>
-                    ${getRatingBadge(entry.rating)}
-                    ${quickInfo}
+                    ${headerInfo}
                 </div>
                 <div class="expand-toggle"></div>
             </div>
@@ -261,7 +271,7 @@ export function createEntryCard(entry) {
                         <div class="detail-value">${entry.oneThingToWorkOn}</div>
                     </div>
                 ` : ''}
-                <div class="btn-group" style="margin-top: 15px;">
+                <div class="btn-group">
                     <button class="edit-btn">✏️ Edit</button>
                     <button class="delete-btn">🗑️ Delete</button>
                 </div>
@@ -276,19 +286,4 @@ window.toggleEntryExpand = function(key) {
     if (card) {
         card.classList.toggle('expanded');
     }
-};
-
-// Initialize dark mode
-export function initializeDarkMode() {
-    const darkMode = localStorage.getItem('darkMode') === 'true';
-    if (darkMode) {
-        document.body.classList.add('dark-mode');
-    }
-}
-
-// Toggle dark mode
-window.toggleDarkMode = function() {
-    document.body.classList.toggle('dark-mode');
-    const isDark = document.body.classList.contains('dark-mode');
-    localStorage.setItem('darkMode', isDark);
 };

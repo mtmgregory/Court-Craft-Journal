@@ -93,7 +93,6 @@ window.handleSignup = async function(event) {
 window.handleLogout = async function() {
     try {
         await signOut(auth);
-        localStorage.removeItem('darkMode');
         if (window.showToast) {
             window.showToast('Logged out successfully', 'success');
         }

@@ -170,31 +170,6 @@
     transform: translateY(-2px);
 }
 
-/* Mode Toggle Button - Enhanced */
-.mode-toggle {
-    position: fixed;
-    bottom: var(--spacing-lg);
-    left: var(--spacing-lg);
-    width: 3.5rem;
-    height: 3.5rem;
-    border-radius: var(--radius-full);
-    font-size: 1.5rem;
-    background: var(--gray-800);
-    color: white;
-    box-shadow: var(--shadow-lg);
-    z-index: 900;
-    transition: all var(--transition-base);
-}
-
-.mode-toggle:hover {
-    transform: scale(1.15) rotate(15deg);
-    box-shadow: var(--shadow-xl);
-    background: var(--gray-900);
-}
-
-.mode-toggle:active {
-    transform: scale(1.05) rotate(0deg);
-}
 
 /* Section Dividers */
 .section-divider {
@@ -243,9 +218,5 @@
         font-size: 0.85rem;
     }
     
-    .mode-toggle {
-        width: 3rem;
-        height: 3rem;
-        font-size: 1.25rem;
-    }
+   
 }
