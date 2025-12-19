@@ -174,24 +174,122 @@
                             <label for="gameScores">Game Scores:</label>
                             <textarea id="gameScores" placeholder="11-4, 11-6, 11-6"></textarea>
 
-                            <h3>My Performance Analysis</h3>
-                            <label for="perfLengthWidth">Length and Width:</label>
-                            <textarea id="perfLengthWidth" placeholder="Describe your target hitting"></textarea>
+<h3>🎾 My Performance Analysis</h3>
+<p style="color: var(--gray-600); margin-bottom: 1.5rem; font-size: 0.9rem;">Rate each aspect from 1 (poor) to 10 (excellent) and add notes</p>
 
-                            <label for="perfHeightPace">Height and Pace:</label>
-                            <textarea id="perfHeightPace" placeholder="Describe how you controlled the pace and use height"></textarea>
-                            
-                            <label for="perfControlT">Control and T Position:</label>
-                            <textarea id="perfControlT" placeholder="Describe your control or lack of control?"></textarea>
+<!-- Length and Width -->
+<label for="perfLengthWidthRating">Length and Width - Rating:</label>
+<select id="perfLengthWidthRating">
+    <option value="">Select Rating (1-10)</option>
+    <option value="10">⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐ 10 - Excellent</option>
+    <option value="9">⭐⭐⭐⭐⭐⭐⭐⭐⭐ 9 - Outstanding</option>
+    <option value="8">⭐⭐⭐⭐⭐⭐⭐⭐ 8 - Very Good</option>
+    <option value="7">⭐⭐⭐⭐⭐⭐⭐ 7 - Good</option>
+    <option value="6">⭐⭐⭐⭐⭐⭐ 6 - Above Average</option>
+    <option value="5">⭐⭐⭐⭐⭐ 5 - Average</option>
+    <option value="4">⭐⭐⭐⭐ 4 - Below Average</option>
+    <option value="3">⭐⭐⭐ 3 - Poor</option>
+    <option value="2">⭐⭐ 2 - Very Poor</option>
+    <option value="1">⭐ 1 - Terrible</option>
+</select>
 
-                            <label for="perfMovement">Movement:</label>
-                            <textarea id="perfMovement" placeholder="Describe your efficiency, explosiveness, and balanced?"></textarea>
-                            
-                            <label for="perfAttack">Attack:</label>
-                            <textarea id="perfAttack" placeholder="Describe how you attacked during your match?"></textarea>
+<label for="perfLengthWidth">Length and Width - Notes:</label>
+<textarea id="perfLengthWidth" placeholder="Describe your target hitting, depth control, and court coverage..."></textarea>
 
-                            <label for="perfHittingToSpace">Hitting to Space:</label>
-                            <textarea id="perfHittingToSpace" placeholder="Describe hitting to space in your match?"></textarea>
+<!-- Height and Pace -->
+<label for="perfHeightPaceRating">Height and Pace - Rating:</label>
+<select id="perfHeightPaceRating">
+    <option value="">Select Rating (1-10)</option>
+    <option value="10">⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐ 10 - Excellent</option>
+    <option value="9">⭐⭐⭐⭐⭐⭐⭐⭐⭐ 9 - Outstanding</option>
+    <option value="8">⭐⭐⭐⭐⭐⭐⭐⭐ 8 - Very Good</option>
+    <option value="7">⭐⭐⭐⭐⭐⭐⭐ 7 - Good</option>
+    <option value="6">⭐⭐⭐⭐⭐⭐ 6 - Above Average</option>
+    <option value="5">⭐⭐⭐⭐⭐ 5 - Average</option>
+    <option value="4">⭐⭐⭐⭐ 4 - Below Average</option>
+    <option value="3">⭐⭐⭐ 3 - Poor</option>
+    <option value="2">⭐⭐ 2 - Very Poor</option>
+    <option value="1">⭐ 1 - Terrible</option>
+</select>
+
+<label for="perfHeightPace">Height and Pace - Notes:</label>
+<textarea id="perfHeightPace" placeholder="Describe how you controlled the pace and used height..."></textarea>
+
+<!-- Control and T Position -->
+<label for="perfControlTRating">Control and T Position - Rating:</label>
+<select id="perfControlTRating">
+    <option value="">Select Rating (1-10)</option>
+    <option value="10">⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐ 10 - Excellent</option>
+    <option value="9">⭐⭐⭐⭐⭐⭐⭐⭐⭐ 9 - Outstanding</option>
+    <option value="8">⭐⭐⭐⭐⭐⭐⭐⭐ 8 - Very Good</option>
+    <option value="7">⭐⭐⭐⭐⭐⭐⭐ 7 - Good</option>
+    <option value="6">⭐⭐⭐⭐⭐⭐ 6 - Above Average</option>
+    <option value="5">⭐⭐⭐⭐⭐ 5 - Average</option>
+    <option value="4">⭐⭐⭐⭐ 4 - Below Average</option>
+    <option value="3">⭐⭐⭐ 3 - Poor</option>
+    <option value="2">⭐⭐ 2 - Very Poor</option>
+    <option value="1">⭐ 1 - Terrible</option>
+</select>
+
+<label for="perfControlT">Control and T Position - Notes:</label>
+<textarea id="perfControlT" placeholder="Describe your court control and T position dominance..."></textarea>
+
+<!-- Movement -->
+<label for="perfMovementRating">Movement - Rating:</label>
+<select id="perfMovementRating">
+    <option value="">Select Rating (1-10)</option>
+    <option value="10">⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐ 10 - Excellent</option>
+    <option value="9">⭐⭐⭐⭐⭐⭐⭐⭐⭐ 9 - Outstanding</option>
+    <option value="8">⭐⭐⭐⭐⭐⭐⭐⭐ 8 - Very Good</option>
+    <option value="7">⭐⭐⭐⭐⭐⭐⭐ 7 - Good</option>
+    <option value="6">⭐⭐⭐⭐⭐⭐ 6 - Above Average</option>
+    <option value="5">⭐⭐⭐⭐⭐ 5 - Average</option>
+    <option value="4">⭐⭐⭐⭐ 4 - Below Average</option>
+    <option value="3">⭐⭐⭐ 3 - Poor</option>
+    <option value="2">⭐⭐ 2 - Very Poor</option>
+    <option value="1">⭐ 1 - Terrible</option>
+</select>
+
+<label for="perfMovement">Movement - Notes:</label>
+<textarea id="perfMovement" placeholder="Describe your efficiency, explosiveness, and balance..."></textarea>
+
+<!-- Attack -->
+<label for="perfAttackRating">Attack - Rating:</label>
+<select id="perfAttackRating">
+    <option value="">Select Rating (1-10)</option>
+    <option value="10">⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐ 10 - Excellent</option>
+    <option value="9">⭐⭐⭐⭐⭐⭐⭐⭐⭐ 9 - Outstanding</option>
+    <option value="8">⭐⭐⭐⭐⭐⭐⭐⭐ 8 - Very Good</option>
+    <option value="7">⭐⭐⭐⭐⭐⭐⭐ 7 - Good</option>
+    <option value="6">⭐⭐⭐⭐⭐⭐ 6 - Above Average</option>
+    <option value="5">⭐⭐⭐⭐⭐ 5 - Average</option>
+    <option value="4">⭐⭐⭐⭐ 4 - Below Average</option>
+    <option value="3">⭐⭐⭐ 3 - Poor</option>
+    <option value="2">⭐⭐ 2 - Very Poor</option>
+    <option value="1">⭐ 1 - Terrible</option>
+</select>
+
+<label for="perfAttack">Attack - Notes:</label>
+<textarea id="perfAttack" placeholder="Describe how you attacked during your match..."></textarea>
+
+<!-- Hitting to Space -->
+<label for="perfHittingToSpaceRating">Hitting to Space - Rating:</label>
+<select id="perfHittingToSpaceRating">
+    <option value="">Select Rating (1-10)</option>
+    <option value="10">⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐ 10 - Excellent</option>
+    <option value="9">⭐⭐⭐⭐⭐⭐⭐⭐⭐ 9 - Outstanding</option>
+    <option value="8">⭐⭐⭐⭐⭐⭐⭐⭐ 8 - Very Good</option>
+    <option value="7">⭐⭐⭐⭐⭐⭐⭐ 7 - Good</option>
+    <option value="6">⭐⭐⭐⭐⭐⭐ 6 - Above Average</option>
+    <option value="5">⭐⭐⭐⭐⭐ 5 - Average</option>
+    <option value="4">⭐⭐⭐⭐ 4 - Below Average</option>
+    <option value="3">⭐⭐⭐ 3 - Poor</option>
+    <option value="2">⭐⭐ 2 - Very Poor</option>
+    <option value="1">⭐ 1 - Terrible</option>
+</select>
+
+<label for="perfHittingToSpace">Hitting to Space - Notes:</label>
+<textarea id="perfHittingToSpace" placeholder="Describe your spatial awareness and shot placement..."></textarea>
 
                             <h3>Opponent Analysis</h3>
                             <label for="oppStrengths">Opponent's Strengths:</label>
@@ -286,7 +384,6 @@
     <script type="module" src="history.js"></script>
     <script type="module" src="insights.js"></script>
     <script type="module" src="export.js"></script>
-    <script type="module" src="import-entries.js"></script>
     <script type="module" src="app.js"></script>
 </body>
 </html>

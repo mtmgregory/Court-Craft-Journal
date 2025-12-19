@@ -1,4 +1,4 @@
-// Form Handlers Module - ENHANCED VALIDATION
+// Form Handlers Module - ENHANCED VALIDATION WITH PERFORMANCE RATINGS
 import { saveEntryToFirestore, saveDraftToFirestore, loadDraftFromFirestore, deleteDraftFromFirestore } from './firestore-service.js';
 import { showToast } from './ui-helpers.js';
 import { loadHistory } from './history.js';
@@ -64,6 +64,27 @@ function validateEntry(entry) {
         }
     }
     
+    // Performance rating validation (1-10 scale)
+    const performanceRatings = [
+        'perfLengthWidthRating',
+        'perfHeightPaceRating',
+        'perfControlTRating',
+        'perfMovementRating',
+        'perfAttackRating',
+        'perfHittingToSpaceRating'
+    ];
+    
+    performanceRatings.forEach(ratingField => {
+        const value = entry[ratingField];
+        if (value !== '' && value !== null && value !== undefined) {
+            const rating = parseInt(value);
+            if (isNaN(rating) || rating < 1 || rating > 10) {
+                const fieldName = ratingField.replace('perf', '').replace('Rating', '');
+                errors.push(`${fieldName} rating must be between 1 and 10`);
+            }
+        }
+    });
+    
     return errors;
 }
 
@@ -91,7 +112,7 @@ window.updateSessionType = function() {
     toggleMatchFields();
 };
 
-// Save entry - WITH ENHANCED VALIDATION
+// Save entry - WITH ENHANCED VALIDATION AND PERFORMANCE RATINGS
 window.saveEntry = async function() {
     const editingKey = document.getElementById('editingKey')?.value;
     const date = document.getElementById('entryDate').value;
@@ -118,12 +139,26 @@ window.saveEntry = async function() {
         opponentLevel: document.getElementById('opponentLevel')?.value || '',
         yourLevel: document.getElementById('yourLevel')?.value || '',
         gameScores: document.getElementById('gameScores')?.value || '',
+        
+        // Performance category ratings (1-10 scale)
+        perfLengthWidthRating: document.getElementById('perfLengthWidthRating')?.value || '',
         perfLengthWidth: document.getElementById('perfLengthWidth')?.value || '',
+        
+        perfHeightPaceRating: document.getElementById('perfHeightPaceRating')?.value || '',
         perfHeightPace: document.getElementById('perfHeightPace')?.value || '',
+        
+        perfControlTRating: document.getElementById('perfControlTRating')?.value || '',
         perfControlT: document.getElementById('perfControlT')?.value || '',
+        
+        perfMovementRating: document.getElementById('perfMovementRating')?.value || '',
         perfMovement: document.getElementById('perfMovement')?.value || '',
+        
+        perfAttackRating: document.getElementById('perfAttackRating')?.value || '',
         perfAttack: document.getElementById('perfAttack')?.value || '',
+        
+        perfHittingToSpaceRating: document.getElementById('perfHittingToSpaceRating')?.value || '',
         perfHittingToSpace: document.getElementById('perfHittingToSpace')?.value || '',
+        
         oppStrengths: document.getElementById('oppStrengths')?.value || '',
         oppWeaknesses: document.getElementById('oppWeaknesses')?.value || '',
         matchSummary: document.getElementById('matchSummary')?.value || '',
@@ -242,7 +277,15 @@ async function saveDraft() {
         sessionType: document.getElementById('sessionTypeSelect')?.value || '',
         sessionDetails: document.getElementById('sessionDetails')?.value || '',
         rating: document.getElementById('sessionRating')?.value || '',
-        notes: document.getElementById('notes')?.value || ''
+        notes: document.getElementById('notes')?.value || '',
+        
+        // Include performance ratings in draft
+        perfLengthWidthRating: document.getElementById('perfLengthWidthRating')?.value || '',
+        perfHeightPaceRating: document.getElementById('perfHeightPaceRating')?.value || '',
+        perfControlTRating: document.getElementById('perfControlTRating')?.value || '',
+        perfMovementRating: document.getElementById('perfMovementRating')?.value || '',
+        perfAttackRating: document.getElementById('perfAttackRating')?.value || '',
+        perfHittingToSpaceRating: document.getElementById('perfHittingToSpaceRating')?.value || ''
     };
     
     // Only save if there's actual content
@@ -269,7 +312,15 @@ export async function loadDraft() {
             'sessionTypeSelect': 'sessionType',
             'sessionDetails': 'sessionDetails',
             'sessionRating': 'rating',
-            'notes': 'notes'
+            'notes': 'notes',
+            
+            // Performance ratings
+            'perfLengthWidthRating': 'perfLengthWidthRating',
+            'perfHeightPaceRating': 'perfHeightPaceRating',
+            'perfControlTRating': 'perfControlTRating',
+            'perfMovementRating': 'perfMovementRating',
+            'perfAttackRating': 'perfAttackRating',
+            'perfHittingToSpaceRating': 'perfHittingToSpaceRating'
         };
         
         Object.keys(fieldMap).forEach(fieldId => {

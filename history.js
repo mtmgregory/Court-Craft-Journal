@@ -1,4 +1,4 @@
-// History Module - Enhanced Error Handling
+// History Module - Enhanced with Performance Rating Support
 import { 
     getAllEntriesFromFirestore, 
     getEntryFromFirestore, 
@@ -119,7 +119,7 @@ export async function loadHistory() {
 
 window.loadHistory = loadHistory;
 
-// Edit entry - ENHANCED ERROR HANDLING
+// Edit entry - ENHANCED WITH PERFORMANCE RATINGS
 export async function editEntry(key) {
     if (!key) {
         showToast('Invalid entry key', 'error');
@@ -152,7 +152,7 @@ export async function editEntry(key) {
         if (firstTab) firstTab.classList.add('active');
         if (journalView) journalView.classList.add('active');
         
-        // Populate form fields
+        // Populate form fields - INCLUDES ALL PERFORMANCE RATINGS
         const fieldMap = {
             'entryDate': entry.date,
             'weatherCondition': entry.weather,
@@ -170,12 +170,26 @@ export async function editEntry(key) {
             'opponentLevel': entry.opponentLevel,
             'yourLevel': entry.yourLevel,
             'gameScores': entry.gameScores,
+            
+            // Performance category ratings (1-10 scale)
+            'perfLengthWidthRating': entry.perfLengthWidthRating,
             'perfLengthWidth': entry.perfLengthWidth,
+            
+            'perfHeightPaceRating': entry.perfHeightPaceRating,
             'perfHeightPace': entry.perfHeightPace,
+            
+            'perfControlTRating': entry.perfControlTRating,
             'perfControlT': entry.perfControlT,
+            
+            'perfMovementRating': entry.perfMovementRating,
             'perfMovement': entry.perfMovement,
+            
+            'perfAttackRating': entry.perfAttackRating,
             'perfAttack': entry.perfAttack,
+            
+            'perfHittingToSpaceRating': entry.perfHittingToSpaceRating,
             'perfHittingToSpace': entry.perfHittingToSpace,
+            
             'oppStrengths': entry.oppStrengths,
             'oppWeaknesses': entry.oppWeaknesses,
             'matchSummary': entry.matchSummary,

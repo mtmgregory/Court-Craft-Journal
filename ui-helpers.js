@@ -1,4 +1,4 @@
-// UI Helpers Module - ENHANCED LAYOUT - FIXED
+// UI Helpers Module - ENHANCED WITH PERFORMANCE RATINGS
 
 // Show toast notification
 export function showToast(message, type = 'success') {
@@ -21,6 +21,63 @@ export function showToast(message, type = 'success') {
 }
 
 window.showToast = showToast;
+
+// Format performance rating with stars and color coding
+function formatPerformanceRating(rating, notes) {
+    if (!rating && !notes) return '';
+    
+    let html = '<div style="margin-top: 0.5rem;">';
+    
+    if (rating) {
+        const ratingNum = parseInt(rating);
+        const stars = '⭐'.repeat(ratingNum);
+        const emptyStars = '☆'.repeat(10 - ratingNum);
+        
+        let ratingClass = 'rating-inline';
+        if (ratingNum >= 8) ratingClass += ' excellent';
+        else if (ratingNum >= 6) ratingClass += ' good';
+        else if (ratingNum >= 4) ratingClass += ' average';
+        else ratingClass += ' poor';
+        
+        html += `<div class="${ratingClass}" style="font-size: 0.85rem; margin-bottom: 0.25rem; padding: 0.25rem 0.5rem; border-radius: 4px; display: inline-block;">
+            <strong>Rating:</strong> ${stars}${emptyStars} <strong>${ratingNum}/10</strong>
+        </div>`;
+    }
+    
+    if (notes) {
+        html += `<div style="color: var(--gray-700); margin-top: 0.25rem;">${notes}</div>`;
+    }
+    
+    html += '</div>';
+    return html;
+}
+
+// Get performance average badge for match entries
+function getPerformanceAverageBadge(entry) {
+    if (entry.sessionType !== 'Match Day') return '';
+    
+    const ratings = [
+        entry.perfLengthWidthRating,
+        entry.perfHeightPaceRating,
+        entry.perfControlTRating,
+        entry.perfMovementRating,
+        entry.perfAttackRating,
+        entry.perfHittingToSpaceRating
+    ].filter(r => r && !isNaN(parseInt(r))).map(r => parseInt(r));
+    
+    if (ratings.length === 0) return '';
+    
+    const avg = ratings.reduce((a, b) => a + b, 0) / ratings.length;
+    const avgRounded = avg.toFixed(1);
+    
+    let badgeClass = 'performance-avg-badge';
+    if (avg >= 8) badgeClass += ' excellent';
+    else if (avg >= 6) badgeClass += ' good';
+    else if (avg >= 4) badgeClass += ' average';
+    else badgeClass += ' poor';
+    
+    return `<span class="${badgeClass}" title="Average across ${ratings.length} performance categories">Perf: ${avgRounded}/10</span>`;
+}
 
 // Get rating badge HTML with color coding
 function getRatingBadge(rating) {
@@ -95,7 +152,7 @@ function getHealthIndicator(value, type) {
     return value;
 }
 
-// Create entry card HTML with enhanced styling - IMPROVED LAYOUT
+// Create entry card HTML with enhanced styling - INCLUDES PERFORMANCE RATINGS
 export function createEntryCard(entry) {
     const date = new Date(entry.date);
     const formattedDate = date.toLocaleDateString('en-US', { 
@@ -137,6 +194,7 @@ export function createEntryCard(entry) {
             <div class="entry-badges-row">
                 ${getSessionTypeBadge(entry.sessionType)}
                 ${isMatch && entry.opponentName ? `<span class="opponent-badge">vs ${entry.opponentName}</span>` : ''}
+                ${getPerformanceAverageBadge(entry)}
             </div>
             ${healthMetricsHTML}
         </div>
@@ -164,6 +222,70 @@ export function createEntryCard(entry) {
             <div class="detail-label">Your Level</div>
             <div class="detail-value stat">${entry.yourLevel}</div>
         </div>` : ''}
+    ` : '';
+    
+    // Performance details with ratings - NEW ENHANCED SECTION
+    const performanceDetails = isMatch ? `
+        ${entry.perfLengthWidth || entry.perfLengthWidthRating ? `
+            <div class="detail-item" style="margin-bottom: 10px;">
+                <div class="detail-label">📏 Length and Width</div>
+                <div class="detail-value">${formatPerformanceRating(entry.perfLengthWidthRating, entry.perfLengthWidth)}</div>
+            </div>
+        ` : ''}
+        ${entry.perfHeightPace || entry.perfHeightPaceRating ? `
+            <div class="detail-item" style="margin-bottom: 10px;">
+                <div class="detail-label">⬆️ Height and Pace</div>
+                <div class="detail-value">${formatPerformanceRating(entry.perfHeightPaceRating, entry.perfHeightPace)}</div>
+            </div>
+        ` : ''}
+        ${entry.perfControlT || entry.perfControlTRating ? `
+            <div class="detail-item" style="margin-bottom: 10px;">
+                <div class="detail-label">🎯 Control and T Position</div>
+                <div class="detail-value">${formatPerformanceRating(entry.perfControlTRating, entry.perfControlT)}</div>
+            </div>
+        ` : ''}
+        ${entry.perfMovement || entry.perfMovementRating ? `
+            <div class="detail-item" style="margin-bottom: 10px;">
+                <div class="detail-label">🏃 Movement</div>
+                <div class="detail-value">${formatPerformanceRating(entry.perfMovementRating, entry.perfMovement)}</div>
+            </div>
+        ` : ''}
+        ${entry.perfAttack || entry.perfAttackRating ? `
+            <div class="detail-item" style="margin-bottom: 10px;">
+                <div class="detail-label">⚡ Attack</div>
+                <div class="detail-value">${formatPerformanceRating(entry.perfAttackRating, entry.perfAttack)}</div>
+            </div>
+        ` : ''}
+        ${entry.perfHittingToSpace || entry.perfHittingToSpaceRating ? `
+            <div class="detail-item" style="margin-bottom: 10px;">
+                <div class="detail-label">🎲 Hitting to Space</div>
+                <div class="detail-value">${formatPerformanceRating(entry.perfHittingToSpaceRating, entry.perfHittingToSpace)}</div>
+            </div>
+        ` : ''}
+        ${entry.oppStrengths ? `
+            <div class="detail-item" style="margin-bottom: 10px;">
+                <div class="detail-label">💪 Opponent's Strengths</div>
+                <div class="detail-value">${entry.oppStrengths}</div>
+            </div>
+        ` : ''}
+        ${entry.oppWeaknesses ? `
+            <div class="detail-item" style="margin-bottom: 10px;">
+                <div class="detail-label">🎯 Opponent's Weaknesses</div>
+                <div class="detail-value">${entry.oppWeaknesses}</div>
+            </div>
+        ` : ''}
+        ${entry.matchSummary ? `
+            <div class="detail-item" style="margin-bottom: 10px;">
+                <div class="detail-label">📝 Match Summary</div>
+                <div class="detail-value">${entry.matchSummary}</div>
+            </div>
+        ` : ''}
+        ${entry.oneThingToWorkOn ? `
+            <div class="detail-item" style="margin-bottom: 10px;">
+                <div class="detail-label">🎓 One Thing to Work On</div>
+                <div class="detail-value">${entry.oneThingToWorkOn}</div>
+            </div>
+        ` : ''}
     ` : '';
     
     return `
@@ -211,66 +333,7 @@ export function createEntryCard(entry) {
                         <div class="detail-value">${entry.notes}</div>
                     </div>
                 ` : ''}
-                ${entry.perfLengthWidth ? `
-                    <div class="detail-item" style="margin-bottom: 10px;">
-                        <div class="detail-label">Length and Width</div>
-                        <div class="detail-value">${entry.perfLengthWidth}</div>
-                    </div>
-                ` : ''}
-                ${entry.perfHeightPace ? `
-                    <div class="detail-item" style="margin-bottom: 10px;">
-                        <div class="detail-label">Height and Pace</div>
-                        <div class="detail-value">${entry.perfHeightPace}</div>
-                    </div>
-                ` : ''}
-                ${entry.perfControlT ? `
-                    <div class="detail-item" style="margin-bottom: 10px;">
-                        <div class="detail-label">Control and T Position</div>
-                        <div class="detail-value">${entry.perfControlT}</div>
-                    </div>
-                ` : ''}
-                ${entry.perfMovement ? `
-                    <div class="detail-item" style="margin-bottom: 10px;">
-                        <div class="detail-label">Movement</div>
-                        <div class="detail-value">${entry.perfMovement}</div>
-                    </div>
-                ` : ''}
-                ${entry.perfAttack ? `
-                    <div class="detail-item" style="margin-bottom: 10px;">
-                        <div class="detail-label">Attack</div>
-                        <div class="detail-value">${entry.perfAttack}</div>
-                    </div>
-                ` : ''}
-                ${entry.perfHittingToSpace ? `
-                    <div class="detail-item" style="margin-bottom: 10px;">
-                        <div class="detail-label">Hitting to Space</div>
-                        <div class="detail-value">${entry.perfHittingToSpace}</div>
-                    </div>
-                ` : ''}
-                ${entry.oppStrengths ? `
-                    <div class="detail-item" style="margin-bottom: 10px;">
-                        <div class="detail-label">Opponent's Strengths</div>
-                        <div class="detail-value">${entry.oppStrengths}</div>
-                    </div>
-                ` : ''}
-                ${entry.oppWeaknesses ? `
-                    <div class="detail-item" style="margin-bottom: 10px;">
-                        <div class="detail-label">Opponent's Weaknesses</div>
-                        <div class="detail-value">${entry.oppWeaknesses}</div>
-                    </div>
-                ` : ''}
-                ${entry.matchSummary ? `
-                    <div class="detail-item" style="margin-bottom: 10px;">
-                        <div class="detail-label">Match Summary</div>
-                        <div class="detail-value">${entry.matchSummary}</div>
-                    </div>
-                ` : ''}
-                ${entry.oneThingToWorkOn ? `
-                    <div class="detail-item" style="margin-bottom: 10px;">
-                        <div class="detail-label">One Thing to Work On</div>
-                        <div class="detail-value">${entry.oneThingToWorkOn}</div>
-                    </div>
-                ` : ''}
+                ${performanceDetails}
                 <div class="btn-group">
                     <button class="edit-btn">✏️ Edit</button>
                     <button class="delete-btn">🗑️ Delete</button>
