@@ -1,86 +1,69 @@
-// Main Application Script - FIXED EVENT DELEGATION
+// Main Application Script
 import { initAuth, getCurrentUser } from './auth.js';
 import { migrateFromLocalStorage } from './firestore-service.js';
-import { startAutoSave, loadDraft } from './form-handlers.js';
-import { toggleMatchFields } from './form-handlers.js';
+import { startAutoSave, loadDraft, setDistractions } from './form-handlers.js';
 
 // Import all other modules to ensure they're loaded
 import './history.js';
 import './insights.js';
 import './export.js';
+import './admin.js';
 
 // Global event delegation for dynamic content
 function setupEventDelegation() {
-    // Delegate delete button clicks
     document.addEventListener('click', (e) => {
-        // Handle delete buttons
-        if (e.target.matches('.delete-btn') || e.target.closest('.delete-btn')) {
+        // Delete buttons
+        const deleteBtn = e.target.closest('.delete-btn');
+        if (deleteBtn) {
             e.preventDefault();
-            e.stopPropagation(); // Prevent event from bubbling
-            const btn = e.target.matches('.delete-btn') ? e.target : e.target.closest('.delete-btn');
-            const card = btn.closest('.entry-card');
-            if (card) {
-                const key = card.dataset.entryKey;
-                if (key && window.deleteEntry) {
-                    window.deleteEntry(key);
-                }
-            }
+            e.stopPropagation();
+            const key = deleteBtn.closest('.entry-card')?.dataset.entryKey;
+            if (key && window.deleteEntry) window.deleteEntry(key);
             return;
         }
-        
-        // Handle edit buttons
-        if (e.target.matches('.edit-btn') || e.target.closest('.edit-btn')) {
+
+        // Edit buttons
+        const editBtn = e.target.closest('.edit-btn');
+        if (editBtn) {
             e.preventDefault();
-            e.stopPropagation(); // Prevent event from bubbling
-            const btn = e.target.matches('.edit-btn') ? e.target : e.target.closest('.edit-btn');
-            const card = btn.closest('.entry-card');
-            if (card) {
-                const key = card.dataset.entryKey;
-                if (key && window.editEntry) {
-                    window.editEntry(key);
-                }
-            }
+            e.stopPropagation();
+            const key = editBtn.closest('.entry-card')?.dataset.entryKey;
+            // cards in the Admin tab belong to other athletes and use keys starting "admin:"
+            if (key && key.startsWith('admin:')) { if (window.adminEditEntry) window.adminEditEntry(key); }
+            else if (key && window.editEntry) window.editEntry(key);
             return;
         }
-        
-        // Handle entry card header clicks for expansion
-        if (e.target.matches('.entry-card-header') || e.target.closest('.entry-card-header')) {
-            // Don't trigger if clicking on buttons or inside button groups
-            if (e.target.matches('button') || e.target.closest('button') || 
-                e.target.matches('.btn-group') || e.target.closest('.btn-group')) {
-                return;
-            }
-            
-            const header = e.target.matches('.entry-card-header') ? e.target : e.target.closest('.entry-card-header');
-            const card = header.closest('.entry-card');
-            if (card) {
-                const key = card.dataset.entryKey;
-                if (key && window.toggleEntryExpand) {
-                    window.toggleEntryExpand(key);
-                }
-            }
+
+        // Entry card header clicks for expansion
+        const header = e.target.closest('.entry-card-header');
+        if (header) {
+            if (e.target.closest('button') || e.target.closest('.btn-group')) return;
+            const key = header.closest('.entry-card')?.dataset.entryKey;
+            if (key && window.toggleEntryExpand) window.toggleEntryExpand(key);
         }
     });
 }
 
-// Cleanup function (called on logout or page unload if needed)
-function cleanup() {
-    console.log('Cleaning up application resources...');
-    
-    // Clear any timers (auto-save, etc.)
-    // Note: The actual timer is managed in form-handlers.js
-    
-    // Remove any temporary data
-    // (Most cleanup happens automatically with modern browsers)
+// Open the calendar when the date field is clicked, not just its small icon
+function setupCalendarPicker() {
+    document.addEventListener('click', (e) => {
+        const input = e.target.closest('input[type="date"]');
+        if (!input || typeof input.showPicker !== 'function') return;
+        const box = input.getBoundingClientRect();
+        if (e.clientX > box.right - 44) return; // the native icon already opens it
+        try { input.showPicker(); } catch (err) { /* picker unavailable: typing still works */ }
+    });
 }
 
-// Initialize app on load
+function cleanup() {
+    console.log('Cleaning up application resources...');
+}
+
 window.onload = function() {
-    console.log('Initializing Court Craft Journal...');
-    
-    // Initialize Firebase Authentication
+    console.log('Initializing TRJ Reflection Journals...');
+
     initAuth();
-    
+
     // Set today's date
     const dateField = document.getElementById('entryDate');
     if (dateField) {
@@ -90,21 +73,19 @@ window.onload = function() {
         const day = String(today.getDate()).padStart(2, '0');
         dateField.value = `${year}-${month}-${day}`;
     }
-        
-    // Setup event delegation for dynamic content
+
+    // Start with one empty distraction row
+    setDistractions([]);
+
     setupEventDelegation();
-    
-    // Load draft from Firestore
+    setupCalendarPicker();
+
     loadDraft().catch(err => {
         console.error('Failed to load draft:', err);
     });
-    
-    // Start auto-save
+
     startAutoSave();
-    
-    // Initialize match fields visibility
-    toggleMatchFields();
-    
+
     // Attempt migration from localStorage if needed
     setTimeout(() => {
         if (getCurrentUser()) {
@@ -113,14 +94,12 @@ window.onload = function() {
             });
         }
     }, 2000);
-    
+
     console.log('Application initialized successfully');
 };
 
-// Cleanup on page unload
 window.addEventListener('beforeunload', () => {
     cleanup();
 });
 
-// Export cleanup for use in logout
 window.cleanupApp = cleanup;
