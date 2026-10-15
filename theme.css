@@ -350,7 +350,6 @@ option { background: #000; color: #fff; }
 
 .score-grid input,
 .score-grid select,
-.distraction-row input,
 .goal-block textarea { max-width: 100%; }
 
 .goal-block {
@@ -361,20 +360,6 @@ option { background: #000; color: #fff; }
 }
 
 .goal-block h3 { color: #fff; }
-
-.distraction-row {
-    background: var(--gray-50);
-    border: 1px solid var(--gray-200);
-    border-radius: var(--radius-md);
-}
-
-.distraction-remove {
-    background: transparent;
-    border: 1px solid var(--gray-400);
-    color: #fff;
-}
-
-.distraction-remove:hover { background: var(--primary); border-color: var(--primary); color: #fff; }
 
 /* ---------- buttons ---------- */
 
@@ -395,7 +380,6 @@ button:disabled { background: var(--gray-300); color: var(--gray-500); }
 /* secondary actions: outlined, so only the main action is solid red */
 .btn-secondary,
 .quick-btn,
-.add-row-btn,
 .entry-card .edit-btn,
 .edit-btn {
     background: transparent;
@@ -405,7 +389,6 @@ button:disabled { background: var(--gray-300); color: var(--gray-500); }
 
 .btn-secondary:hover,
 .quick-btn:hover,
-.add-row-btn:hover,
 .entry-card .edit-btn:hover,
 .edit-btn:hover {
     background: #fff;
@@ -505,10 +488,6 @@ button:disabled { background: var(--gray-300); color: var(--gray-500); }
 }
 
 .level-item input[type="text"] { font-family: var(--font); }
-
-.distraction-view-row { background: #000; border: 1px solid var(--gray-200); }
-
-.dv-label { text-transform: none; letter-spacing: 0.01em; font-size: 0.75rem; color: var(--gray-500); }
 
 .no-entries {
     background: var(--gray-50);
@@ -708,3 +687,10 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover { background: var(--
 
 /* four stat cards on one row at the standard frame width */
 .stats-grid { grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); }
+
+/* ---------- slider questions ---------- */
+.slider-field { background: var(--gray-50); border: 1px solid var(--gray-200); }
+.slider-head label { color: #fff; }
+.slider-value { color: #fff; }
+.slider-clear:hover { background: var(--primary); color: #fff; }
+.slider-ends { color: var(--gray-500); }

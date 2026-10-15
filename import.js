@@ -2,7 +2,7 @@
 import { saveEntryToFirestore } from './firestore-service.js';
 import { showToast } from './ui-helpers.js';
 import { loadHistory } from './history.js';
-import { CSV_COLUMNS, textToDistractions } from './fields.js';
+import { CSV_COLUMNS } from './fields.js';
 
 export function showImportDialog() {
     const dialog = document.createElement('div');
@@ -132,13 +132,11 @@ function parseCSV(text) {
             const value = (rows[i][idx] || '').trim();
 
             if (key === 'date') entry.date = parseDate(value);
-            else if (key === 'distractions') entry.distractions = textToDistractions(value);
             else if (key in NUMERIC_KEYS) entry[key] = value.replace(NUMERIC_KEYS[key] ? /[^0-9.]/g : /[^0-9]/g, '');
             else entry[key] = value;
         });
 
         if (entry.date && entry.sessionType) {
-            if (!entry.distractions) entry.distractions = [];
             entries.push(entry);
         }
     }

@@ -1,7 +1,7 @@
 // Export Module
 import { getAllEntriesFromFirestore } from './firestore-service.js';
 import { showToast } from './ui-helpers.js';
-import { CSV_COLUMNS, distractionsToText } from './fields.js';
+import { CSV_COLUMNS } from './fields.js';
 
 const cell = (text) => `"${(text ?? '').toString().replace(/"/g, '""')}"`;
 
@@ -20,7 +20,6 @@ export async function exportToCSV() {
 
         entries.forEach(entry => {
             const row = CSV_COLUMNS.map(([, key]) => {
-                if (key === 'distractions') return cell(distractionsToText(entry.distractions));
                 return cell(entry[key]);
             });
             rows.push(row.join(','));

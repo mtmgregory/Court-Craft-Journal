@@ -113,26 +113,8 @@ function goalBlock(num, goal, strategy, score) {
         <div class="detail-item" style="margin-bottom: 10px;">
             <div class="detail-label">🎯 Process Goal ${num}${hasScore ? ` · achieved ${esc(score)}%` : ''}</div>
             <div class="detail-value" style="white-space: pre-wrap;">${esc(goal || '—')}</div>
-            ${strategy ? `<div class="detail-label" style="margin-top:0.5rem;">Execution Strategy</div>
+            ${strategy ? `<div class="detail-label" style="margin-top:0.5rem;">How</div>
             <div class="detail-value" style="white-space: pre-wrap; font-weight: 500;">${esc(strategy)}</div>` : ''}
-        </div>`;
-}
-
-function distractionTable(list) {
-    const rows = (list || []).filter(d => d && (d.distraction || d.reaction || d.refocus));
-    if (rows.length === 0) return '';
-    return `
-        <div class="detail-item" style="margin-bottom: 10px;">
-            <div class="detail-label">🧩 Distraction Control Audit</div>
-            <div class="distraction-view">
-                ${rows.map(d => `
-                    <div class="distraction-view-row">
-                        <div><span class="dv-label">Distraction</span>${esc(d.distraction || '—')}</div>
-                        <div><span class="dv-label">Reaction</span>${esc(d.reaction || '—')}</div>
-                        <div><span class="dv-label">Refocus Routine</span>${esc(d.refocus || '—')}</div>
-                        <div><span class="dv-label">Did it work?</span>${d.effect ? esc(d.effect) + '/5' : '—'}</div>
-                    </div>`).join('')}
-            </div>
         </div>`;
 }
 
@@ -151,7 +133,7 @@ export function createEntryCard(entry, options = {}) {
         <div class="entry-header-info">
             <div class="entry-date-row">
                 <span class="entry-date">${esc(formattedDate)}</span>
-                ${(options.ownerLabel || entry.athleteName) ? `<span class="opponent-badge">👤 ${esc(options.ownerLabel || entry.athleteName)}</span>` : ''}
+                ${options.ownerLabel ? `<span class="opponent-badge">👤 ${esc(options.ownerLabel)}</span>` : ''}
             </div>
             <div class="entry-badges-row">
                 ${getSessionTypeBadge(entry.sessionType)}
@@ -192,7 +174,6 @@ export function createEntryCard(entry, options = {}) {
                 ${detail('✨ Highlight / Evidence', entry.highlight)}
                 ${detail('💡 Key Lesson Learned', entry.lesson)}
                 ${detail('🛡️ Determination & Resilience', entry.resilience)}
-                ${distractionTable(entry.distractions)}
                 ${detail('📋 Coach Feedback / Debrief Notes', entry.coachNotes)}
                 ${detail("➡️ Target Focus for Tomorrow's Session", entry.tomorrowFocus)}
                 ${entry.lastEditedBy ? detail('✏️ Last edited by', entry.lastEditedBy + (entry.lastEditedAt ? ' on ' + new Date(entry.lastEditedAt).toLocaleDateString('en-NZ') : '')) : ''}

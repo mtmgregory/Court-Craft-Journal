@@ -1,7 +1,8 @@
 // Main Application Script
 import { initAuth, getCurrentUser } from './auth.js';
 import { migrateFromLocalStorage } from './firestore-service.js';
-import { startAutoSave, loadDraft, setDistractions } from './form-handlers.js';
+import { startAutoSave, loadDraft } from './form-handlers.js';
+import { setupSliders, syncSliders } from './sliders.js';
 
 // Import all other modules to ensure they're loaded
 import './history.js';
@@ -74,13 +75,13 @@ window.onload = function() {
         dateField.value = `${year}-${month}-${day}`;
     }
 
-    // Start with one empty distraction row
-    setDistractions([]);
+    // Build the slider questions before any draft is loaded
+    setupSliders();
 
     setupEventDelegation();
     setupCalendarPicker();
 
-    loadDraft().catch(err => {
+    loadDraft().then(syncSliders).catch(err => {
         console.error('Failed to load draft:', err);
     });
 

@@ -1,7 +1,8 @@
 // Form Handlers Module - High-Performance Athlete Daily Journal
 import { saveEntryToFirestore, saveDraftToFirestore, loadDraftFromFirestore, deleteDraftFromFirestore } from './firestore-service.js';
-import { showToast, esc } from './ui-helpers.js';
+import { showToast } from './ui-helpers.js';
 import { FIELD_MAP } from './fields.js';
+import { syncSliders } from './sliders.js';
 import { saveEntryAsAdmin } from './admin-service.js';
 import { getCurrentUser } from './auth.js';
 
@@ -9,71 +10,12 @@ let autoSaveTimer = null;
 let isSaving = false;
 let pendingSave = false;
 
-// ---------- Distraction rows ----------
-function distractionRowHTML(d = {}) {
-    return `
-        <div class="distraction-row">
-            <div>
-                <label>Distraction Encountered</label>
-                <input type="text" class="d-distraction" placeholder="e.g., Unfair referee call / Lactic fatigue" value="${esc(d.distraction)}">
-            </div>
-            <div>
-                <label>Emotional &amp; Physical Reaction</label>
-                <input type="text" class="d-reaction" placeholder="e.g., Increased heart rate, frustration" value="${esc(d.reaction)}">
-            </div>
-            <div>
-                <label>Refocusing Cue / Routine Used</label>
-                <input type="text" class="d-refocus" placeholder='e.g., Cue word "Next Point" + 4-7-8 breath reset' value="${esc(d.refocus)}">
-            </div>
-            <div>
-                <label>Did it work? (1–5)</label>
-                <select class="d-effect">
-                    <option value="">Rate</option>
-                    ${[1, 2, 3, 4, 5].map(n => `<option value="${n}"${String(d.effect) === String(n) ? ' selected' : ''}>${n}${n === 1 ? ' – Not at all' : n === 5 ? ' – Fully' : ''}</option>`).join('')}
-                </select>
-            </div>
-            <button type="button" class="distraction-remove" title="Remove row" onclick="removeDistractionRow(this)">✕</button>
-        </div>`;
-}
-
-export function setDistractions(list) {
-    const container = document.getElementById('distractionRows');
-    if (!container) return;
-    const rows = Array.isArray(list) && list.length ? list : [{}];
-    container.innerHTML = rows.map(distractionRowHTML).join('');
-}
-
-window.addDistractionRow = function() {
-    const container = document.getElementById('distractionRows');
-    if (container) container.insertAdjacentHTML('beforeend', distractionRowHTML());
-};
-
-window.removeDistractionRow = function(btn) {
-    const container = document.getElementById('distractionRows');
-    const row = btn.closest('.distraction-row');
-    if (row) row.remove();
-    if (container && !container.querySelector('.distraction-row')) window.addDistractionRow();
-    scheduleAutoSave();
-};
-
-function collectDistractions() {
-    return Array.from(document.querySelectorAll('#distractionRows .distraction-row'))
-        .map(row => ({
-            distraction: row.querySelector('.d-distraction')?.value.trim() || '',
-            reaction: row.querySelector('.d-reaction')?.value.trim() || '',
-            refocus: row.querySelector('.d-refocus')?.value.trim() || '',
-            effect: row.querySelector('.d-effect')?.value || ''
-        }))
-        .filter(d => d.distraction || d.reaction || d.refocus);
-}
-
 // ---------- Form <-> data ----------
 export function getFormData() {
     const data = {};
     Object.entries(FIELD_MAP).forEach(([id, key]) => {
         data[key] = document.getElementById(id)?.value ?? '';
     });
-    data.distractions = collectDistractions();
     return data;
 }
 
@@ -89,7 +31,7 @@ export function setFormData(entry, { skipEmpty = false } = {}) {
         }
         field.value = value ?? '';
     });
-    setDistractions(entry.distractions);
+    syncSliders();
 }
 
 // ---------- Validation ----------
@@ -170,23 +112,19 @@ window.clearForm = function() {
     const form = document.querySelector('#journal');
     if (!form) return;
 
-    const wasAdminEdit = !!document.getElementById('editingOwner')?.value;
-
-    // keep the date and athlete name so they don't need retyping
+    // keep the date so it doesn't need retyping
     form.querySelectorAll('input, textarea, select').forEach(input => {
-        if (input.id !== 'entryDate' && input.id !== 'athleteName') input.value = '';
+        if (input.id !== 'entryDate') input.value = '';
     });
-    // the name belongs to the athlete whose entry was edited, so don't carry it over
-    if (wasAdminEdit) document.getElementById('athleteName').value = '';
+    syncSliders();
     if (window.hideAdminEditBanner) window.hideAdminEditBanner();
-    setDistractions([]);
 
     const editingKey = document.getElementById('editingKey');
     if (editingKey) editingKey.value = '';
 
     const saveBtn = document.getElementById('saveBtn');
     const cancelBtn = document.getElementById('cancelBtn');
-    if (saveBtn) saveBtn.textContent = '💾 Save Journal Entry';
+    if (saveBtn) saveBtn.textContent = 'Save journal entry';
     if (cancelBtn) cancelBtn.style.display = 'none';
 
     deleteDraftFromFirestore().catch(err => console.error('Failed to delete draft:', err));
@@ -227,7 +165,6 @@ function scheduleAutoSave() {
 export function startAutoSave() {
     const form = document.querySelector('#journal');
     if (!form) return;
-    // delegated so dynamically-added distraction rows are covered too
     form.addEventListener('input', scheduleAutoSave);
     form.addEventListener('change', scheduleAutoSave);
 }
@@ -239,8 +176,8 @@ async function saveDraft() {
     const draft = getFormData();
 
     const hasContent = Object.entries(draft).some(([key, val]) => {
-        if (key === 'date' || key === 'athleteName') return false;
-        return Array.isArray(val) ? val.length > 0 : val !== '';
+        if (key === 'date') return false;
+        return val !== '';
     });
 
     if (hasContent) {

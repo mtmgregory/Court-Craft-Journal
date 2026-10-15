@@ -66,7 +66,6 @@ export async function loadInsights() {
         html += analyzeOptimalConditions(entries);
         html += analyzeRecovery(entries, stats);
         html += analyzeGoals(entries);
-        html += analyzeDistractions(entries);
         html += generateRecommendations(entries, stats);
         html += latestTomorrowFocus(entries);
 
@@ -447,60 +446,6 @@ function analyzeGoals(entries) {
         items.push('✨ Complete the post-session highlight and key lesson more often. They reinforce self-belief and speed up learning.');
     }
     return section('📝 Process Goals & Reflection', items);
-}
-
-function analyzeDistractions(entries) {
-    const all = entries.flatMap(e => e.distractions || []);
-    if (all.length === 0) {
-        return section('🧩 Distraction Control', ['No distractions logged yet. Record them, your refocus routine and how well it worked to see which cues are worth keeping.']);
-    }
-
-    const items = [];
-    const sessionsWith = entries.filter(e => (e.distractions || []).length > 0).length;
-    items.push(`🧩 Distractions logged in <strong>${sessionsWith}</strong> session${sessionsWith !== 1 ? 's' : ''} (<strong>${all.length}</strong> total).`);
-
-    const topDistractions = tally(all.map(d => d.distraction)).slice(0, 3);
-    if (topDistractions.length) {
-        items.push(`⚠️ <strong>Most common distractions:</strong> ${topDistractions.map(([t, c]) => `${esc(t)} (${c}×)`).join(', ')}.`);
-    }
-
-    const topCues = tally(all.map(d => d.refocus)).slice(0, 3);
-    if (topCues.length) {
-        items.push(`🔄 <strong>Most-used refocus routines:</strong> ${topCues.map(([t, c]) => `${esc(t)} (${c}×)`).join(', ')}.`);
-    }
-
-    // effectiveness: which routines actually work
-    const ratedAll = all.map(d => num(d.effect)).filter(v => v !== null);
-    if (ratedAll.length === 0) {
-        items.push('⭐ Rate how well each routine worked (1–5). Then this page can show which routines to keep and which to replace.');
-    } else {
-        items.push(`⭐ Refocus routines worked <strong>${mean(ratedAll).toFixed(1)}/5</strong> on average (${ratedAll.length} rated).`);
-
-        const byCue = {};
-        all.forEach(d => {
-            const key = String(d.refocus || '').trim().toLowerCase();
-            const r = num(d.effect);
-            if (!key || r === null) return;
-            if (!byCue[key]) byCue[key] = [];
-            byCue[key].push(r);
-        });
-        const cues = Object.entries(byCue)
-            .filter(([, v]) => v.length >= 2)
-            .map(([k, v]) => ({ cue: k, avg: mean(v), n: v.length }))
-            .sort((a, b) => b.avg - a.avg);
-
-        const best = cues.filter(c => c.avg >= 3.5).slice(0, 3);
-        const weak = cues.filter(c => c.avg < 3).slice(-3).reverse();
-        if (best.length) items.push(`✅ <strong>Working well:</strong> ${best.map(c => `${esc(c.cue)} (${c.avg.toFixed(1)}/5, used ${c.n}×)`).join(', ')}.`);
-        if (weak.length) items.push(`🔧 <strong>Not working yet:</strong> ${weak.map(c => `${esc(c.cue)} (${c.avg.toFixed(1)}/5, used ${c.n}×)`).join(', ')}. Try changing the cue or practise it in training first.`);
-        if (cues.length === 0) items.push('Use the same routine 2+ times and rate it each time to compare routines.');
-    }
-
-    const withoutRoutine = all.filter(d => d.distraction && !d.refocus).length;
-    if (withoutRoutine > 0) {
-        items.push(`💡 ${withoutRoutine} distraction${withoutRoutine !== 1 ? 's' : ''} had no refocusing routine recorded. Plan a specific cue for each.`);
-    }
-    return section('🧩 Distraction Control', items);
 }
 
 function generateRecommendations(entries, stats) {

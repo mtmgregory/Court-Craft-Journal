@@ -69,11 +69,9 @@ export async function loadHistory() {
                 if (dateRange === 'year' && entryDate.getFullYear() !== now.getFullYear()) return false;
 
                 if (searchKeyword) {
-                    const distractionText = (e.distractions || [])
-                        .map(d => `${d.distraction || ''} ${d.reaction || ''} ${d.refocus || ''}`).join(' ');
                     const searchable = [
-                        e.athleteName, e.sessionType, e.goal1, e.goal1Strategy, e.goal2, e.goal2Strategy,
-                        e.highlight, e.lesson, e.resilience, e.coachNotes, e.tomorrowFocus, distractionText
+                        e.sessionType, e.goal1, e.goal1Strategy, e.goal2, e.goal2Strategy,
+                        e.highlight, e.lesson, e.resilience, e.coachNotes, e.tomorrowFocus
                     ].join(' ').toLowerCase();
                     if (!searchable.includes(searchKeyword)) return false;
                 }

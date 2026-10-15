@@ -5,7 +5,7 @@ import { db, auth, onAuthStateChanged, doc, setDoc, getDoc, getDocs, collection 
 import { collectionGroup } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 import { createEntryCard, showToast, esc } from './ui-helpers.js';
 import { setFormData } from './form-handlers.js';
-import { CSV_COLUMNS, SESSION_TYPES, distractionsToText } from './fields.js';
+import { CSV_COLUMNS, SESSION_TYPES } from './fields.js';
 
 const MAX_CARDS = 300;
 
@@ -57,12 +57,7 @@ function setAdminVisible(visible) {
 // ---------- data ----------
 function labelFor(uid) {
     const email = profiles[uid]?.email || '';
-    const latest = entries
-        .filter(e => e.uid === uid && e.athleteName)
-        .sort((a, b) => String(b.date).localeCompare(String(a.date)))[0];
-    const name = latest?.athleteName || '';
-    if (name && email) return `${name} (${email})`;
-    return name || email || `Athlete ${uid.slice(0, 6)}`;
+    return email || `Athlete ${uid.slice(0, 6)}`;
 }
 
 async function fetchAll() {
@@ -141,7 +136,7 @@ function renderShell() {
             <h2>Filter all entries</h2>
             <div class="search-box">
                 <label for="adminSearch">Search</label>
-                <input type="text" id="adminSearch" value="${esc(filters.search)}" placeholder="Search names, goals, lessons, distractions, coach notes...">
+                <input type="text" id="adminSearch" value="${esc(filters.search)}" placeholder="Search email, goals, lessons, coach notes...">
             </div>
             <div class="filter-row">
                 <div class="filter-group">
@@ -226,8 +221,7 @@ function applyFilters() {
         if (filters.search) {
             const text = [
                 labelFor(e.uid), e.sessionType, e.goal1, e.goal1Strategy, e.goal2, e.goal2Strategy,
-                e.highlight, e.lesson, e.resilience, e.coachNotes, e.tomorrowFocus,
-                (e.distractions || []).map(d => `${d.distraction} ${d.reaction} ${d.refocus}`).join(' ')
+                e.highlight, e.lesson, e.resilience, e.coachNotes, e.tomorrowFocus
             ].join(' ').toLowerCase();
             if (!text.includes(filters.search.toLowerCase())) return false;
         }
@@ -350,7 +344,7 @@ function exportShown() {
     [...shown].sort((a, b) => String(a.date).localeCompare(String(b.date))).forEach(e => {
         rows.push([
             profiles[e.uid]?.email || '', e.uid,
-            ...CSV_COLUMNS.map(([, k]) => k === 'distractions' ? distractionsToText(e.distractions) : e[k]),
+            ...CSV_COLUMNS.map(([, k]) => e[k]),
             e.lastEditedBy || ''
         ].map(cell).join(','));
     });

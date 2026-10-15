@@ -107,14 +107,11 @@
                         <button class="quick-btn" onclick="clearForm()">Clear form</button>
                     </div>
 
-                    <!-- 1. Session Metadata & Morning Recovery Audit -->
+                    <!-- 1. Check-in -->
                     <div class="journal-section">
-                        <h2><span class="sec-num">1</span> Session Metadata &amp; Morning Recovery Audit</h2>
+                        <h2><span class="sec-num">1</span> Daily check-in</h2>
                         <input type="hidden" id="editingKey">
                         <input type="hidden" id="editingOwner">
-
-                        <label for="athleteName">Athlete name</label>
-                        <input type="text" id="athleteName" placeholder="Full name">
 
                         <label for="entryDate">Date</label>
                         <input type="date" id="entryDate" required>
@@ -127,122 +124,72 @@
                             <option value="Off Court">Off Court</option>
                         </select>
 
-                        <div class="score-grid">
-                            <div>
-                                <label for="sleepHours">Sleep duration (hours)</label>
-                                <input type="number" id="sleepHours" step="0.5" min="0" max="24" placeholder="e.g., 7.5">
-                            </div>
-                            <div>
-                                <label for="sleepQuality">Sleep quality score (1–10)</label>
-                                <input type="number" id="sleepQuality" min="1" max="10" placeholder="e.g., 8">
-                            </div>
-                            <div>
-                                <label for="hydration">Hydration volume (litres)</label>
-                                <input type="number" id="hydration" step="0.1" min="0" placeholder="e.g., 2.5">
-                            </div>
-                            <div>
-                                <label for="soreness">Muscle soreness score (1–10)</label>
-                                <input type="number" id="soreness" min="1" max="10" placeholder="e.g., 3">
-                            </div>
-                            <div>
-                                <label for="moodScore">Mood score (1–10, 10 = best)</label>
-                                <input type="number" id="moodScore" min="1" max="10" placeholder="e.g., 7">
-                            </div>
-                            <div>
-                                <label for="stressScore">Perceived stress (1–10, 10 = most stressed)</label>
-                                <input type="number" id="stressScore" min="1" max="10" placeholder="e.g., 4">
-                            </div>
-                            <div>
-                                <label for="fatigueScore">Fatigue (1–10, 10 = most fatigued)</label>
-                                <input type="number" id="fatigueScore" min="1" max="10" placeholder="e.g., 5">
-                            </div>
-                        </div>
+                        <div id="recoverySliders" class="slider-stack"></div>
                     </div>
 
-                    <!-- 2. Pre-Session -->
+                    <!-- 2. Before the session -->
                     <div class="journal-section">
-                        <h2><span class="sec-num">2</span> Pre-Session: Process Focus &amp; Intention</h2>
-                        <p class="section-intro">Set 1–2 SMART process goals within your direct control before stepping onto the court or into the gym (e.g., showing early wrist preparation before the ball crosses the T-line, 100% split-step synchronization, or maintaining connected focus under fatigue).</p>
+                        <h2><span class="sec-num">2</span> Before the session</h2>
+                        <p class="section-intro">Set 1–2 goals you can control.</p>
 
                         <div class="goal-block">
                             <h3>Goal 1</h3>
-                            <label for="goal1">SMART process goal (controllable focus)</label>
-                            <textarea id="goal1" placeholder="e.g., Early wrist prep on 100% of feeds"></textarea>
-                            <label for="goal1Strategy">Execution strategy: how will you maintain this focus?</label>
-                            <textarea id="goal1Strategy" placeholder="e.g., Cock wrist before ball passes T-line; freeze frame on recovery."></textarea>
+                            <label for="goal1">What is the goal?</label>
+                            <textarea id="goal1" placeholder="e.g., Early wrist prep on every feed"></textarea>
+                            <label for="goal1Strategy">How will you do it?</label>
+                            <textarea id="goal1Strategy" placeholder="e.g., Cock wrist before the ball passes the T"></textarea>
                         </div>
 
                         <div class="goal-block">
                             <h3>Goal 2</h3>
-                            <label for="goal2">SMART process goal (controllable focus)</label>
-                            <textarea id="goal2" placeholder="e.g., Controlled 4-7-8 breathing during rest"></textarea>
-                            <label for="goal2Strategy">Execution strategy: how will you maintain this focus?</label>
-                            <textarea id="goal2Strategy" placeholder="e.g., Inhale 4s, hold 7s, exhale 8s between sets to lower heart rate."></textarea>
+                            <label for="goal2">What is the goal?</label>
+                            <textarea id="goal2" placeholder="e.g., Slow breathing between points"></textarea>
+                            <label for="goal2Strategy">How will you do it?</label>
+                            <textarea id="goal2Strategy" placeholder="e.g., In for 4, hold 7, out for 8"></textarea>
                         </div>
                     </div>
 
-                    <!-- 3. Post-Session -->
+                    <!-- 3. After the session -->
                     <div class="journal-section">
-                        <h2><span class="sec-num">3</span> Post-Session: Self-Awareness &amp; Performance Highlights</h2>
-                        <p class="section-intro">Complete immediately following training using positive, constructive performance language to reinforce self-belief.</p>
+                        <h2><span class="sec-num">3</span> After the session</h2>
 
-                        <label for="highlight">Highlight / evidence: what was one specific execution success today proving your technique or tactical plan worked?</label>
+                        <label for="highlight">What went well today?</label>
                         <textarea id="highlight"></textarea>
 
-                        <label for="lesson">Key lesson learned: what is one constructive insight you learned today that you will apply in your next practice?</label>
+                        <label for="lesson">What did you learn?</label>
                         <textarea id="lesson"></textarea>
 
-                        <label for="resilience">Determination &amp; resilience: where did you demonstrate emotional control or mental toughness when under physical fatigue?</label>
+                        <label for="resilience">When did you stay strong while tired?</label>
                         <textarea id="resilience"></textarea>
 
-                        <h3>Process goal check</h3>
-                        <p class="section-intro">How well did you hold each process goal from section 2? 0% = not at all, 100% = every time.</p>
-                        <div class="score-grid">
-                            <div>
-                                <label for="goal1Score">Goal 1 achieved (0–100%)</label>
-                                <input type="number" id="goal1Score" min="0" max="100" step="5" placeholder="e.g., 80">
-                            </div>
-                            <div>
-                                <label for="goal2Score">Goal 2 achieved (0–100%)</label>
-                                <input type="number" id="goal2Score" min="0" max="100" step="5" placeholder="e.g., 60">
-                            </div>
-                        </div>
+                        <h3>How well did you hold your goals?</h3>
+                        <div id="goalSliders" class="slider-stack"></div>
 
-                        <h3>Exertion</h3>
+                        <h3>Effort</h3>
                         <div class="score-grid">
                             <div>
-                                <label for="sessionDuration">Session duration (minutes)</label>
+                                <label for="sessionDuration">Session length (min)</label>
                                 <input type="number" id="sessionDuration" min="1" max="600" placeholder="e.g., 90">
                             </div>
                             <div>
-                                <label for="sessionRPE">Session RPE (1–10)</label>
+                                <label for="sessionRPE">How hard was it? (1–10)</label>
                                 <input type="number" id="sessionRPE" min="1" max="10" placeholder="e.g., 7">
                             </div>
                             <div>
-                                <label for="focusRating">Mental focus rating (1–10)</label>
+                                <label for="focusRating">Mental focus (1–10)</label>
                                 <input type="number" id="focusRating" min="1" max="10" placeholder="e.g., 8" required>
                             </div>
                         </div>
                     </div>
 
-                    <!-- 4. Distraction Control -->
+                    <!-- 4. Coach -->
                     <div class="journal-section">
-                        <h2><span class="sec-num">4</span> Distraction Control &amp; Psychological Refocusing Audit</h2>
-                        <p class="section-intro">Identify any internal or external distractions faced during the session, your reaction, and the specific refocusing routine used.</p>
+                        <h2><span class="sec-num">4</span> Coach</h2>
 
-                        <p class="section-intro">After each distraction, rate how well your refocusing routine worked: 1 = not at all, 5 = fully. Over time this shows which routines to keep.</p>
-                        <div id="distractionRows"></div>
-                        <button type="button" class="add-row-btn" onclick="addDistractionRow()">Add another distraction</button>
-                    </div>
-
-                    <!-- 5. Coach Action Items -->
-                    <div class="journal-section">
-                        <h2><span class="sec-num">5</span> Coach Action Items &amp; IPP Alignment</h2>
-
-                        <label for="coachNotes">Coach feedback / debrief notes</label>
+                        <label for="coachNotes">Coach feedback</label>
                         <textarea id="coachNotes"></textarea>
 
-                        <label for="tomorrowFocus">Target focus for tomorrow's session</label>
+                        <label for="tomorrowFocus">Focus for next session</label>
                         <textarea id="tomorrowFocus"></textarea>
                     </div>
 
@@ -261,7 +208,7 @@
 
                         <div class="search-box">
                             <label for="searchKeyword">Search</label>
-                            <input type="text" id="searchKeyword" placeholder="Search goals, lessons, distractions, coach notes..." oninput="debouncedSearch()">
+                            <input type="text" id="searchKeyword" placeholder="Search goals, lessons, coach notes..." oninput="debouncedSearch()">
                         </div>
 
                         <div class="filter-row">
@@ -332,6 +279,7 @@
     <script type="module" src="auth.js"></script>
     <script type="module" src="firestore-service.js"></script>
     <script type="module" src="fields.js"></script>
+    <script type="module" src="sliders.js"></script>
     <script type="module" src="ui-helpers.js"></script>
     <script type="module" src="form-handlers.js"></script>
     <script type="module" src="history.js"></script>
