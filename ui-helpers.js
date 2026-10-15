@@ -1,5 +1,4 @@
 // UI Helpers Module
-import { sessionLoad } from './fields.js';
 
 export function esc(value) {
     return String(value ?? '')
@@ -127,7 +126,6 @@ export function createEntryCard(entry, options = {}) {
     });
 
     const rpe = parseInt(entry.rpe);
-    const load = sessionLoad(entry);
 
     const headerInfo = `
         <div class="entry-header-info">
@@ -138,7 +136,6 @@ export function createEntryCard(entry, options = {}) {
             <div class="entry-badges-row">
                 ${getSessionTypeBadge(entry.sessionType)}
                 ${!isNaN(rpe) ? `<span class="opponent-badge" title="Session RPE">🔥 RPE ${rpe}/10</span>` : ''}
-                ${load !== null ? `<span class="opponent-badge" title="Session load = RPE × minutes">⚡ Load ${load}</span>` : ''}
             </div>
             ${getHealthIndicators(entry)}
         </div>
@@ -164,9 +161,7 @@ export function createEntryCard(entry, options = {}) {
                     ${gridDetail('Mood', entry.mood ? entry.mood + '/10' : '')}
                     ${gridDetail('Perceived Stress', entry.stress ? entry.stress + '/10' : '')}
                     ${gridDetail('Fatigue', entry.fatigue ? entry.fatigue + '/10' : '')}
-                    ${gridDetail('Session Duration', entry.duration ? entry.duration + ' min' : '')}
                     ${gridDetail('Session RPE', entry.rpe ? entry.rpe + '/10' : '')}
-                    ${gridDetail('Session Load', load !== null ? load + ' AU' : '')}
                     ${gridDetail('Mental Focus', entry.focusRating ? entry.focusRating + '/10' : '')}
                 </div>
                 ${goalBlock(1, entry.goal1, entry.goal1Strategy, entry.goal1Score)}

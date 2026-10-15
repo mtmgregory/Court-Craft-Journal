@@ -1,9 +1,9 @@
 // Slider questions: stacked, full width, quick to answer.
 // The real value lives in a hidden input (same id as before), so saving, drafts,
 // editing and CSV all work unchanged. A slider nobody touched stays blank.
-import { RECOVERY_SLIDERS, GOAL_SLIDERS } from './fields.js';
+import { RECOVERY_SLIDERS, GOAL_SLIDERS, EFFORT_SLIDERS } from './fields.js';
 
-const ALL = [...RECOVERY_SLIDERS, ...GOAL_SLIDERS];
+const ALL = [...RECOVERY_SLIDERS, ...GOAL_SLIDERS, ...EFFORT_SLIDERS];
 
 function fieldHTML(c) {
     return `
@@ -61,18 +61,48 @@ function setValue(field, value) {
 export function setupSliders() {
     buildSliders('recoverySliders', RECOVERY_SLIDERS);
     buildSliders('goalSliders', GOAL_SLIDERS);
+    buildSliders('effortSliders', EFFORT_SLIDERS);
 
-    // touching the thumb without moving it still counts as an answer
+    // The browser moves a slider the moment a finger lands on it, even if the touch
+    // turns into a page scroll. So while a pointer is down we only preview the value,
+    // and commit it when the pointer lifts. A scroll ends in pointercancel (or a mostly
+    // vertical swipe), which restores whatever the slider held before.
+    let active = null;
+
+    const rangeOf = e => e.target.closest?.('.slider-field input[type="range"]');
+
     document.addEventListener('pointerdown', e => {
-        const range = e.target.closest?.('.slider-field input[type="range"]');
-        if (!range) return;
-        const field = range.closest('.slider-field');
-        if (field.classList.contains('unset')) setValue(field, range.value);
+        const range = rangeOf(e);
+        active = range
+            ? { field: range.closest('.slider-field'), range, id: e.pointerId, x: e.clientX, y: e.clientY }
+            : null;
+    });
+
+    function revert(a) {
+        paint(a.field, document.getElementById(a.field.dataset.for)?.value);
+    }
+
+    document.addEventListener('pointerup', e => {
+        const a = active;
+        active = null;
+        if (!a || a.id !== e.pointerId) return;
+        const dx = Math.abs(e.clientX - a.x), dy = Math.abs(e.clientY - a.y);
+        if (dy > 10 && dy > dx) { revert(a); return; }   // it was a scroll
+        setValue(a.field, a.range.value);
+        document.getElementById('journal')?.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+
+    document.addEventListener('pointercancel', () => {
+        if (active) revert(active);
+        active = null;
     });
 
     document.addEventListener('input', e => {
-        const range = e.target.closest?.('.slider-field input[type="range"]');
-        if (range) setValue(range.closest('.slider-field'), range.value);
+        const range = rangeOf(e);
+        if (!range) return;
+        const field = range.closest('.slider-field');
+        if (active && active.field === field) paint(field, range.value);  // preview only
+        else setValue(field, range.value);                                 // keyboard
     });
 
     document.addEventListener('click', e => {

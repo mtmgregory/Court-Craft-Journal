@@ -112,7 +112,7 @@ function parseDate(dateStr) {
 const NUMERIC_KEYS = {
     sleep: true, hydration: true,
     sleepQuality: false, soreness: false, mood: false, stress: false, fatigue: false,
-    duration: false, goal1Score: false, goal2Score: false, rpe: false, focusRating: false
+    goal1Score: false, goal2Score: false, rpe: false, focusRating: false
 };
 
 function parseCSV(text) {

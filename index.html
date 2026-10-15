@@ -166,20 +166,7 @@
                         <div id="goalSliders" class="slider-stack"></div>
 
                         <h3>Effort</h3>
-                        <div class="score-grid">
-                            <div>
-                                <label for="sessionDuration">Session length (min)</label>
-                                <input type="number" id="sessionDuration" min="1" max="600" placeholder="e.g., 90">
-                            </div>
-                            <div>
-                                <label for="sessionRPE">How hard was it? (1–10)</label>
-                                <input type="number" id="sessionRPE" min="1" max="10" placeholder="e.g., 7">
-                            </div>
-                            <div>
-                                <label for="focusRating">Mental focus (1–10)</label>
-                                <input type="number" id="focusRating" min="1" max="10" placeholder="e.g., 8" required>
-                            </div>
-                        </div>
+                        <div id="effortSliders" class="slider-stack"></div>
                     </div>
 
                     <!-- 4. Coach -->
@@ -253,7 +240,6 @@
                                 <option value="rating-desc">Mental focus (highest first)</option>
                                 <option value="rating-asc">Mental focus (lowest first)</option>
                                 <option value="rpe-desc">Session RPE (highest first)</option>
-                                <option value="load-desc">Session load (highest first)</option>
                                 <option value="sleep-desc">Sleep (most first)</option>
                                 <option value="sleep-asc">Sleep (least first)</option>
                             </select>

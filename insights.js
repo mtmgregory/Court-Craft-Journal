@@ -1,7 +1,7 @@
 // Insights Module - High-Performance Athlete Daily Journal
 import { getAllEntriesFromFirestore } from './firestore-service.js';
 import { esc } from './ui-helpers.js';
-import { SESSION_TYPES, sessionLoad } from './fields.js';
+import { SESSION_TYPES } from './fields.js';
 
 // ---------- helpers ----------
 const num = v => {
@@ -56,7 +56,6 @@ export async function loadInsights() {
 
         let html = '';
         html += generateFocusTrendChart(entries);
-        html += generateLoadSection(entries);
         html += generateSessionTypeChart(entries);
         html += generateWeeklyHeatmap(entries);
         html += generateRecoveryChart(entries);
@@ -472,10 +471,6 @@ function generateRecommendations(entries, stats) {
         recs.push({ p: 3, t: '<strong>Capture coach feedback</strong> after sessions so it can feed into your IPP review.' });
     }
 
-    const noDuration = entries.filter(e => sessionLoad(e) === null).length;
-    if (noDuration > entries.length * 0.5) {
-        recs.push({ p: 3, t: '<strong>Log session duration</strong> with your RPE so the app can calculate training load, monotony and strain.' });
-    }
     const goalEntries = entries.filter(e => e.goal1 || e.goal2);
     const unscoredGoals = goalEntries.filter(e => num(e.goal1Score) === null && num(e.goal2Score) === null).length;
     if (goalEntries.length >= 3 && unscoredGoals > goalEntries.length * 0.5) {
@@ -497,79 +492,6 @@ function latestTomorrowFocus(entries) {
     return section('➡️ Your Most Recent Next-Session Focus', [`<strong>${esc(latest.date)}:</strong> ${esc(latest.tomorrowFocus)}`]);
 }
 
-
-// ---------- training load (session-RPE x minutes) ----------
-function weekStartMonday(d) {
-    return new Date(d.getFullYear(), d.getMonth(), d.getDate() - ((d.getDay() + 6) % 7));
-}
-
-function generateLoadSection(entries) {
-    const withLoad = entries.filter(e => sessionLoad(e) !== null);
-    if (withLoad.length === 0) {
-        return section('⚡ Training Load', ['Add session duration (minutes) next to your session RPE. Load = RPE × minutes, and this page will show weekly load, monotony and strain.']);
-    }
-
-    const daily = {};
-    withLoad.forEach(e => {
-        const k = ymd(localDate(e.date));
-        daily[k] = (daily[k] || 0) + sessionLoad(e);
-    });
-
-    const weekKeys = [...new Set(Object.keys(daily).map(k => ymd(weekStartMonday(localDate(k)))))].sort().slice(-8);
-    const thisWeek = ymd(weekStartMonday(new Date()));
-
-    const weeks = weekKeys.map(ws => {
-        const start = localDate(ws);
-        const days = Array.from({ length: 7 }, (_, i) =>
-            daily[ymd(new Date(start.getFullYear(), start.getMonth(), start.getDate() + i))] || 0);
-        const total = days.reduce((a, b) => a + b, 0);
-        const m = total / 7;
-        const sd = Math.sqrt(days.reduce((a, b) => a + (b - m) ** 2, 0) / 6);
-        const complete = ws < thisWeek;
-        const monotony = complete && sd > 0 ? m / sd : null;
-        return { ws, start, total, monotony, strain: monotony !== null ? total * monotony : null, complete };
-    });
-
-    const maxTotal = Math.max(...weeks.map(w => w.total));
-    const bars = weeks.map((w, i) => `
-        <div style="display:flex;align-items:center;gap:0.75rem;">
-            <div style="min-width:64px;font-size:0.8rem;color:var(--gray-600);">${w.start.getMonth() + 1}/${w.start.getDate()}${w.complete ? '' : ' (so far)'}</div>
-            <div style="flex:1;background:var(--gray-200);height:24px;border-radius:var(--radius-md);overflow:hidden;min-width:0;">
-                <div style="width:${(w.total / maxTotal) * 100}%;height:100%;background:${i === weeks.length - 1 ? '#fff' : 'var(--gray-500)'};display:flex;align-items:center;justify-content:flex-end;padding:0 0.5rem;min-width:fit-content;">
-                    <span style="color:${i === weeks.length - 1 ? '#000' : '#fff'};font-weight:700;font-size:0.8rem;white-space:nowrap;">${w.total}</span>
-                </div>
-            </div>
-        </div>`).join('');
-
-    const items = [];
-    const done = weeks.filter(w => w.complete);
-    const last = done[done.length - 1];
-    const prev = done[done.length - 2];
-    if (last) {
-        let line = `📅 Week of ${last.start.getMonth() + 1}/${last.start.getDate()}: load <strong>${last.total}</strong> AU`;
-        if (prev && prev.total > 0) {
-            const change = Math.round(((last.total - prev.total) / prev.total) * 100);
-            line += `, ${change >= 0 ? '+' : ''}${change}% vs the week before`;
-        }
-        line += '.';
-        items.push(line);
-        if (last.monotony !== null) {
-            const high = last.monotony > 2;
-            items.push(`${high ? '⚠️' : '✅'} <strong>Monotony ${last.monotony.toFixed(1)}</strong> (average daily load ÷ its variation). ${high ? 'Above 2.0 is commonly treated as a warning sign: vary hard and easy days more.' : 'Under 2.0, so hard and easy days are varied.'} <strong>Strain ${Math.round(last.strain)}</strong> (weekly load × monotony).`);
-        }
-    } else {
-        items.push('Weekly monotony and strain appear once a full Monday–Sunday week is logged.');
-    }
-    items.push('<em>Days with no logged session count as rest. Several sessions on one day are added together.</em>');
-
-    return `
-        <div class="chart-container">
-            <h3>⚡ Weekly Training Load (RPE × minutes)</h3>
-            <div style="display:flex;flex-direction:column;gap:0.5rem;margin-top:1rem;">${bars}</div>
-            <ul class="insight-list" style="margin-top:1rem;">${items.map(i => `<li>${i}</li>`).join('')}</ul>
-        </div>
-    `;
-}
 
 // ---------- recent readings vs the athlete's own baseline ----------
 const BASELINE_METRICS = [

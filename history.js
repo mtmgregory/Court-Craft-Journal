@@ -6,7 +6,6 @@ import {
 } from './firestore-service.js';
 import { createEntryCard, showToast } from './ui-helpers.js';
 import { setFormData } from './form-handlers.js';
-import { sessionLoad } from './fields.js';
 
 let searchTimeout;
 window.debouncedSearch = function() {
@@ -89,7 +88,6 @@ export async function loadHistory() {
             if (sortBy === 'rating-desc') return num(b.focusRating) - num(a.focusRating);
             if (sortBy === 'rating-asc') return num(a.focusRating) - num(b.focusRating);
             if (sortBy === 'rpe-desc') return num(b.rpe) - num(a.rpe);
-            if (sortBy === 'load-desc') return (sessionLoad(b) || 0) - (sessionLoad(a) || 0);
             if (sortBy === 'sleep-desc') return num(b.sleep) - num(a.sleep);
             if (sortBy === 'sleep-asc') return num(a.sleep) - num(b.sleep);
             return 0;

@@ -27,7 +27,6 @@ export const FIELD_MAP = {
     resilience: 'resilience',
     goal1Score: 'goal1Score',
     goal2Score: 'goal2Score',
-    sessionDuration: 'duration',
     sessionRPE: 'rpe',
     focusRating: 'focusRating',
     coachNotes: 'coachNotes',
@@ -54,21 +53,11 @@ export const CSV_COLUMNS = [
     ['Highlight / Evidence', 'highlight'],
     ['Key Lesson Learned', 'lesson'],
     ['Determination & Resilience', 'resilience'],
-    ['Session Duration (min)', 'duration'],
     ['Session RPE (1-10)', 'rpe'],
     ['Mental Focus Rating (1-10)', 'focusRating'],
     ['Coach Feedback / Debrief Notes', 'coachNotes'],
     ["Target Focus for Tomorrow's Session", 'tomorrowFocus']
 ];
-
-// Session load (arbitrary units) = session RPE x duration in minutes.
-// Returns null unless both numbers are present.
-export function sessionLoad(entry) {
-    const rpe = parseFloat(entry?.rpe);
-    const minutes = parseFloat(entry?.duration);
-    if (isNaN(rpe) || isNaN(minutes) || rpe <= 0 || minutes <= 0) return null;
-    return Math.round(rpe * minutes);
-}
 
 // Slider questions. Each stores a number in the hidden input with the same id.
 // A slider left untouched stays blank, so it never records a made-up value.
@@ -85,4 +74,9 @@ export const RECOVERY_SLIDERS = [
 export const GOAL_SLIDERS = [
     { id: 'goal1Score', label: 'Goal 1 achieved', min: 0, max: 100, step: 5, start: 50, unit: '%', low: 'Not at all', high: 'Every time' },
     { id: 'goal2Score', label: 'Goal 2 achieved', min: 0, max: 100, step: 5, start: 50, unit: '%', low: 'Not at all', high: 'Every time' }
+];
+
+export const EFFORT_SLIDERS = [
+    { id: 'sessionRPE',  label: 'How hard was it? (effort)', min: 1, max: 10, step: 1, start: 5, of: 10, low: 'Very easy', high: 'Maximal' },
+    { id: 'focusRating', label: 'Mental focus (required)',   min: 1, max: 10, step: 1, start: 5, of: 10, low: 'Scattered', high: 'Locked in' }
 ];

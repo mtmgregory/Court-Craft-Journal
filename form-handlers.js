@@ -60,7 +60,6 @@ function validateEntry(entry) {
     checkScale(errors, entry.mood, 'Mood score');
     checkScale(errors, entry.stress, 'Perceived stress score');
     checkScale(errors, entry.fatigue, 'Fatigue score');
-    checkScale(errors, entry.duration, 'Session duration', 1, 600);
     checkScale(errors, entry.goal1Score, 'Goal 1 achieved', 0, 100);
     checkScale(errors, entry.goal2Score, 'Goal 2 achieved', 0, 100);
     checkScale(errors, entry.sleep, 'Sleep duration', 0, 24, false);
