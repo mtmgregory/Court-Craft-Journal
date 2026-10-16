@@ -694,3 +694,14 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover { background: var(--
 .slider-value { color: #fff; }
 .slider-clear:hover { background: var(--primary); color: #fff; }
 .slider-ends { color: var(--gray-500); }
+
+/* ---------- password reset ---------- */
+.success-message {
+    color: #fff;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    margin-bottom: var(--spacing-md);
+}
+.success-message:empty { display: none; }
+.success-message { border-left: 3px solid var(--primary); padding-left: var(--spacing-md); }
+.forgot-link { margin-top: var(--spacing-md); }
